@@ -1,5 +1,9 @@
 class PT::Flow::UI < PT::UI
 
+  def my_work #default command
+    help
+  end
+
   def start
     tasks = @client.get_work(@project)
     table = PT::TasksTable.new(tasks)
@@ -10,12 +14,11 @@ class PT::Flow::UI < PT::UI
       task = select("Please select a task to start working on", table)
     end
 
-    result = @client.assign_task(@project, task, owner)
+    result = @client.assign_task(@project, task, @local_config[:user_name])
     if result.errors.any?
       error(result.errors.errors)
     else
       start_task(task)
-      congrats("Task assigned to #{owner}, checking out new branch!")
       `git checkout -B #{task.id}`
     end
   end
@@ -39,6 +42,17 @@ class PT::Flow::UI < PT::UI
     deliver_task(task)
   end
 
+  def help
+    if ARGV[0] && ARGV[0] != 'help'
+      message("Command #{ARGV[0]} not recognized. Showing help.")
+    end
+
+    title("Command line usage")
+    puts("flow start                             # start working on a story")
+    puts("flow finish                            # finish a story and create a pull request")
+    puts("flow deliver                           # merge current story branch and clean up")
+  end
+
   private
 
   def github_page_url
@@ -49,9 +63,5 @@ class PT::Flow::UI < PT::UI
 
   def current_branch
     @current_branch ||= `git rev-parse --abbrev-ref HEAD`.strip
-  end
-
-  def owner
-    @local_config[:user_name]
   end
 end
