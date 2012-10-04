@@ -34,7 +34,8 @@ class PT::Flow::UI < PT::UI
   def finish
     `git push origin #{current_branch}`
     task = PivotalTracker::Story.find(current_branch, @project.id)
-    `open '#{github_page_url}/pull/new/#{current_branch}?title=#{task.name} [##{task.id}]&body=#{task.url}'`
+    pull_request_url = "#{github_page_url}/pull/new/#{current_branch}?title=#{task.name} [##{task.id}]&body=#{task.url}"
+    `open '#{pull_request_url}'`
   end
 
   def deliver
