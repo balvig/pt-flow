@@ -1,6 +1,6 @@
 # Pt::Flow
 
-TODO: Write a gem description. Made a change.
+TODO: Write a gem description.
 
 ## Installation
 
