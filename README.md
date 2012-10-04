@@ -13,13 +13,13 @@ Install the gem:
 ### Committer
 - flow checkout
 - commit, commit
-- git commit -m '[fixes] bug for bla bla'
-- git commit -m '[completed] cropping story'
+- git commit -m '[fixes] bug for bla bla' or git commit -m '[completed] cropping story'
+- git push origin 325325
 - flow request
-- cap staging deploy:migrations BRANCH=325325325
+- cap staging deploy:migrations BRANCH=325325
 
 ### Reviewer
 - git fetch
-- git co 325325325
+- git checkout 325325325
 - flow merge
 - cap production deploy
