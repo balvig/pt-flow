@@ -2,7 +2,15 @@ class PT::Flow::UI < PT::UI
 
   def setup
     `git-tracker install`
-    list
+    message 'git-tracker ready to add story numbers to commits'
+    congrats 'All done!'
+  end
+
+  def load_local_config
+    config = super
+    config[:github_url] = ask "What is the url for the Github repo?"
+    save_config(config, LOCAL_CONFIG_PATH)
+    config
   end
 
   def list
