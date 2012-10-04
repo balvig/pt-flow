@@ -36,6 +36,17 @@ class PT::Flow::UI < PT::UI
     `open '#{github_url}/pull/new/#{current_branch}?title=#{task.name} [##{task.id}]'`
   end
 
+  def merge
+    branch = @params[0] || current_branch
+    `git checkout master`
+    `git merge #{branch}`
+    `git push origin master`
+    `git push origin :#{branch}`
+    `git branch -d #{branch}`
+    task = PivotalTracker::Story.find(branch, @project.id)
+    deliver_task(task)
+  end
+
   private
 
   def github_url
