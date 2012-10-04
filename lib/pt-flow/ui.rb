@@ -1,16 +1,5 @@
 class PT::Flow::UI < PT::UI
 
-  def setup
-    `git-tracker install`
-    message 'git-tracker ready to add story numbers to commits'
-    congrats 'All done!'
-  end
-
-  def list
-    @params[0] ||= 'all'
-    super
-  end
-
   def start
     tasks = @client.get_work(@project)
     table = PT::TasksTable.new(tasks)
@@ -25,15 +14,16 @@ class PT::Flow::UI < PT::UI
     if result.errors.any?
       error(result.errors.errors)
     else
+      start_task(task)
       congrats("Task assigned to #{owner}, checking out new branch!")
+      `git checkout -B #{task.id}`
     end
-
-    `git checkout -B #{task.id}`
   end
 
   def finish
     `git push origin #{current_branch}`
     task = PivotalTracker::Story.find(current_branch, @project.id)
+    finish_task(task)
     pull_request_url = "#{github_page_url}/pull/new/#{current_branch}?title=#{task.name} [##{task.id}]&body=#{task.url}"
     `open '#{pull_request_url}'`
   end

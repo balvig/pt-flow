@@ -16,5 +16,4 @@ Gem::Specification.new do |gem|
   gem.version       = PT::Flow::VERSION
 
   gem.add_dependency 'pt'
-  gem.add_dependency 'git_tracker'
 end
