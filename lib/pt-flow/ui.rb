@@ -6,15 +6,6 @@ class PT::Flow::UI < PT::UI
     congrats 'All done!'
   end
 
-  def load_local_config
-    config = super
-    unless config[:github_url]
-      config[:github_url] = ask "What is the url for the Github repo?"
-      save_config(config, LOCAL_CONFIG_PATH)
-    end
-    config
-  end
-
   def list
     @params[0] ||= 'all'
     super
@@ -43,7 +34,7 @@ class PT::Flow::UI < PT::UI
   def request
     `git push origin #{current_branch}`
     task = PivotalTracker::Story.find(current_branch, @project.id)
-    `open '#{github_url}/pull/new/#{current_branch}?title=#{task.name} [##{task.id}]'`
+    `open '#{github_page_url}/pull/new/#{current_branch}?title=#{task.name} [##{task.id}]'`
   end
 
   def merge
@@ -59,8 +50,10 @@ class PT::Flow::UI < PT::UI
 
   private
 
-  def github_url
-    @local_config[:github_url]
+  def github_page_url
+    repo_url = `git config --get remote.origin.url`.strip
+    stub = repo_url.match(/:(\S+\/\S+)\.git/)[1]
+    "https://github.com/#{stub}"
   end
 
   def current_branch
