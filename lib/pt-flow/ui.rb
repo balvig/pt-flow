@@ -60,7 +60,7 @@ class PT::Flow::UI < PT::UI
   private
 
   def github_url
-    'https://github.com/balvig/pt-flow'
+    @local_config[:github_url]
   end
 
   def current_branch
