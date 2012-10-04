@@ -8,8 +8,10 @@ class PT::Flow::UI < PT::UI
 
   def load_local_config
     config = super
-    config[:github_url] = ask "What is the url for the Github repo?"
-    save_config(config, LOCAL_CONFIG_PATH)
+    unless config[:github_url]
+      config[:github_url] = ask "What is the url for the Github repo?"
+      save_config(config, LOCAL_CONFIG_PATH)
+    end
     config
   end
 
