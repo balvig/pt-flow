@@ -11,7 +11,7 @@ class PT::Flow::UI < PT::UI
     super
   end
 
-  def checkout
+  def start
     tasks = @client.get_work(@project)
     table = PT::TasksTable.new(tasks)
     if @params[0]
@@ -31,13 +31,13 @@ class PT::Flow::UI < PT::UI
     `git checkout -B #{task.id}`
   end
 
-  def request
+  def finish
     `git push origin #{current_branch}`
     task = PivotalTracker::Story.find(current_branch, @project.id)
     `open '#{github_page_url}/pull/new/#{current_branch}?title=#{task.name} [##{task.id}]&body=#{task.url}'`
   end
 
-  def merge
+  def deliver
     branch = @params[0] || current_branch
     `git checkout master`
     `git merge #{branch}`

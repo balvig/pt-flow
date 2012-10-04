@@ -13,17 +13,16 @@ Install the gem:
 ### Committer
 
 ```
-$ flow checkout
-$ git commit -a -m '[completed] cropping story'
-$ flow request
+$ flow start
+# work, work, work
+$ flow finish
 $ cap staging deploy:migrations BRANCH=325325
 ```
 
 ### Reviewer
 ```
 $ git fetch
-$ git checkout 325325 
+$ git checkout 325325
 # run tests, review code etc...
-$ flow merge
-$ cap production deploy
+$ flow deliver
 ```
