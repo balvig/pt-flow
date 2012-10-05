@@ -42,6 +42,19 @@ class PT::Flow::UI < PT::UI
     deliver_task(task)
   end
 
+  def cleanup
+    # Run from master
+    `git checkout master`
+
+    # Remove local fully merged branches
+    `git branch --merged master | grep -v 'master$' | xargs git branch -d`
+
+    # Update our list of remotes
+    `git fetch`
+    `git remote prune origin`
+    congrats('All clean!')
+  end
+
   def help
     if ARGV[0] && ARGV[0] != 'help'
       message("Command #{ARGV[0]} not recognized. Showing help.")
@@ -51,6 +64,7 @@ class PT::Flow::UI < PT::UI
     puts("flow start                             # start working on a story")
     puts("flow finish                            # finish a story and create a pull request")
     puts("flow deliver                           # merge current story branch and clean up")
+    puts("flow cleanup                           # deleted merged local branches and prune origin")
   end
 
   private
