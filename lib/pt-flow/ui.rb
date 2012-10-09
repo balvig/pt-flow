@@ -40,9 +40,6 @@ class PT::Flow::UI < PT::UI
   end
 
   def cleanup
-    # Run from master
-    `git checkout master`
-
     # Update our list of remotes
     `git fetch`
     `git remote prune origin`
