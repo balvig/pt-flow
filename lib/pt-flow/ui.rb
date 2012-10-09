@@ -43,12 +43,13 @@ class PT::Flow::UI < PT::UI
     # Run from master
     `git checkout master`
 
-    # Remove local fully merged branches
-    `git branch --merged master | grep -v 'master$' | xargs git branch -d`
-
     # Update our list of remotes
     `git fetch`
     `git remote prune origin`
+
+    # Remove local branches fully merged with origin/master
+    `git branch --merged origin/master | grep -v 'master$' | xargs git branch -d`
+
     congrats('All clean!')
   end
 
