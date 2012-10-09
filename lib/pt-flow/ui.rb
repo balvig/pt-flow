@@ -14,13 +14,10 @@ class PT::Flow::UI < PT::UI
       task = select("Please select a task to start working on", table)
     end
 
-    result = @client.assign_task(@project, task, @local_config[:user_name])
-    if result.errors.any?
-      error(result.errors.errors)
-    else
-      start_task(task)
-      `git checkout -B #{task.id}`
-    end
+    estimate_task(task, ask("How many points do you estimate for it? (#{@project.point_scale})")) if task.estimate < 0
+    assign_task(task, @local_config[:user_name])
+    start_task(task)
+    `git checkout -B #{task.id}`
   end
 
   def finish
@@ -68,6 +65,20 @@ class PT::Flow::UI < PT::UI
   end
 
   private
+
+  def assign_task(task, owner)
+    result = @client.assign_task(@project, task, owner)
+    if result.errors.any?
+      error(result.errors.errors)
+    else
+      congrats("Task assigned to #{owner}")
+    end
+  end
+
+  def error(*msg)
+    super
+    exit(false)
+  end
 
   def github_page_url
     repo_url = `git config --get remote.origin.url`.strip
