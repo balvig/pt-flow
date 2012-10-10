@@ -45,7 +45,7 @@ class PT::Flow::UI < PT::UI
     `git remote prune origin`
 
     # Remove local branches fully merged with origin/master
-    `git branch --merged origin/master | grep -v 'master$' | xargs git branch -d`
+    `git branch --merged origin/master | grep -v 'master$' | xargs git branch -D`
 
     congrats('All clean!')
   end
