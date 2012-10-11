@@ -29,8 +29,9 @@ class PT::Flow::UI < PT::UI
   end
 
   def deliver
+    `git fetch`
     `git checkout #{current_target}`
-    `git fetch && git pull --rebase origin #{current_target}`
+    `git pull --rebase origin #{current_target}`
     `git merge #{current_branch}`
     `git push origin #{current_target}`
     `git push origin :#{current_branch}`
