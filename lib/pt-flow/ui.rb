@@ -17,25 +17,25 @@ class PT::Flow::UI < PT::UI
     estimate_task(task, ask("How many points do you estimate for it? (#{@project.point_scale})")) if task.estimate && task.estimate < 0
     assign_task(task, @local_config[:user_name])
     start_task(task)
-    `git checkout -B #{task.id}`
+    `git checkout -B #{current_target}-#{task.id}`
   end
 
   def finish
     `git push origin #{current_branch}`
-    task = PivotalTracker::Story.find(current_branch, @project.id)
+    task = PivotalTracker::Story.find(current_task_id, @project.id)
     finish_task(task)
-    pull_request_url = "#{github_page_url}/pull/new/#{current_branch}?title=#{task.name} [##{task.id}]&body=#{task.url}"
+    pull_request_url = "#{github_page_url}/pull/new/#{current_branch}..#{current_target}?title=#{task.name} [##{task.id}]&body=#{task.url}"
     `open '#{pull_request_url}'`
   end
 
   def deliver
-    branch = @params[0] || current_branch
-    `git checkout master`
-    `git merge #{branch}`
-    `git push origin master`
-    `git push origin :#{branch}`
-    `git branch -d #{branch}`
-    task = PivotalTracker::Story.find(branch, @project.id)
+    `git checkout #{current_target}`
+    `git fetch && git pull --rebase origin #{current_target}`
+    `git merge #{current_branch}`
+    `git push origin #{current_target}`
+    `git push origin :#{current_branch}`
+    `git branch -d #{current_branch}`
+    task = PivotalTracker::Story.find(current_task_id, @project.id)
     deliver_task(task)
   end
 
@@ -86,5 +86,13 @@ class PT::Flow::UI < PT::UI
 
   def current_branch
     @current_branch ||= `git rev-parse --abbrev-ref HEAD`.strip
+  end
+
+  def current_target
+    current_branch.split('-').first
+  end
+
+  def current_task_id
+    current_branch.split('-').last
   end
 end
