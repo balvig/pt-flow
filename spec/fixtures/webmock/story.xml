@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<story>
+  <id type="integer">4459994</id>
+  <project_id type="integer">102622</project_id>
+  <story_type>feature</story_type>
+  <url>http://www.pivotaltracker.com/story/show/4459994</url>
+  <estimate type="integer">-1</estimate>
+  <current_state>unstarted</current_state>
+  <description>Generic description</description>
+  <name>Unestimated Feature</name>
+  <requested_by>Jon Mischo</requested_by>
+  <created_at type="datetime">2010/07/27 21:51:01 UTC</created_at>
+  <updated_at type="datetime">2010/07/27 22:20:46 UTC</updated_at>
+</story>

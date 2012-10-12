@@ -1,43 +1,37 @@
 require 'spec_helper'
 
-module PT::Flow
-  describe UI do
+def fixture_file(name)
+  File.new File.join(File.dirname(__FILE__), '..', '..', 'fixtures', 'webmock', name)
+end
 
-    let(:project) { double('Project', id: 1, use_https: false) }
-    let(:task) { double('Task', id: 1, name: 'Do this', current_state: 'Unscheduled', estimate: 1, errors: []) }
-    let(:prompt) { double('HighLine') }
+describe PT::Flow::UI do
 
-    before do
-      PivotalTracker::Project.stub(all: [], find: project)
-      PivotalTracker::Story.stub(find: task)
-      HighLine.stub(new: prompt)
-    end
+  let(:endpoint) { "http://www.pivotaltracker.com/services/v3" }
+  let(:prompt) { double('HighLine') }
 
-    describe '#start' do
-      before do
-        project.stub(stories: double('stories', all: [task]))
-      end
-
-      context 'given no args' do
-        it "shows lists of tasks - choosing one starts/assigns the task on pt and checks out a new branch." do
-          prompt.should_receive(:ask).with("Please select a task to start working on (1-1, 'q' to exit)".bold).and_return('1')
-          task.should_receive(:update).with(owned_by: 'Jens Balvig').and_return(task)
-          task.should_receive(:update).with(current_state: 'started').and_return(task)
-          UI.any_instance.should_receive(:`).with('git checkout -B 1')
-
-          ui = UI.new %w{ start }
-        end
-      end
-      context 'given a number' do
-        it "starts/assigns the task on pt and checks out a new branch." do
-          task.should_receive(:update).with(owned_by: 'Jens Balvig').and_return(task)
-          task.should_receive(:update).with(current_state: 'started').and_return(task)
-          UI.any_instance.should_receive(:`).with('git checkout -B 1')
-
-          ui = UI.new %w{ start 1 }
-        end
-      end
-    end
-
+  before do
+    HighLine.stub(new: prompt)
+    stub_request(:get, /projects$/).to_return(body: fixture_file('projects.xml'))
+    stub_request(:get, /stories\?/).to_return(body: fixture_file('stories.xml'))
+    stub_request(:any, /stories\/\d+/).to_return(body: fixture_file('story.xml'))
   end
+
+  describe '#start' do
+    context 'given an unestimated task' do
+      it "shows lists of tasks - choosing one asks you to estimate the task and starts/assigns the task on pt and checks out a new branch." do
+
+        prompt.should_receive(:ask).with("Please select a task to start working on (1-14, 'q' to exit)".bold).and_return('2')
+        prompt.should_receive(:ask).with("How many points do you estimate for it? (0,1,2,3)".bold).and_return('3')
+
+        PT::Flow::UI.new %w{ start }
+
+        WebMock.should have_requested(:get, "#{endpoint}/projects/102622/stories?filter=current_state:unscheduled,unstarted,started")
+        WebMock.should have_requested(:put, "#{endpoint}/projects/102622/stories/4459994").with(body: /<estimate>3<\/estimate>/)
+        WebMock.should have_requested(:put, "#{endpoint}/projects/102622/stories/4459994").with(body: /<owned_by>Jon Mischo<\/owned_by>/)
+        WebMock.should have_requested(:put, "#{endpoint}/projects/102622/stories/4459994").with(body: /<current_state>started<\/current_state>/)
+
+      end
+    end
+  end
+
 end
