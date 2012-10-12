@@ -1,4 +1,3 @@
-require 'bundler'
 require 'pt-flow'
 
 PT::UI.send(:remove_const, :GLOBAL_CONFIG_PATH)

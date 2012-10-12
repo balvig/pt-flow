@@ -13,6 +13,7 @@ class PT::Flow::UI < PT::UI
     estimate_task(task, ask("How many points do you estimate for it? (#{@project.point_scale})")) if task.estimate && task.estimate < 0
     assign_task(task, @local_config[:user_name])
     start_task(task)
+    puts `pwd`
     #`git checkout -B #{current_target}-#{task.id}`
   end
 
