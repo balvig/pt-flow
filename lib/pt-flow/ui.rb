@@ -13,37 +13,36 @@ class PT::Flow::UI < PT::UI
     estimate_task(task, ask("How many points do you estimate for it? (#{@project.point_scale})")) if task.estimate && task.estimate < 0
     assign_task(task, @local_config[:user_name])
     start_task(task)
-    puts `pwd`
-    #`git checkout -B #{current_target}-#{task.id}`
+    run("git checkout -B #{current_target}-#{task.id}")
   end
 
   def finish
-    `git push origin #{current_branch}`
+    run("git push origin #{current_branch}")
     task = PivotalTracker::Story.find(current_task_id, @project.id)
     finish_task(task)
     pull_request_url = "#{github_page_url}/pull/new/#{current_target}...#{current_branch}?title=#{task.name} [##{task.id}]&body=#{task.url}"
-    `open '#{pull_request_url}'`
+    run("open '#{pull_request_url}'")
   end
 
   def deliver
-    `git fetch`
-    `git checkout #{current_target}`
-    `git pull --rebase origin #{current_target}`
-    `git merge #{current_branch}`
-    `git push origin #{current_target}`
-    `git push origin :#{current_branch}`
-    `git branch -d #{current_branch}`
+    run('git fetch')
+    run("git checkout #{current_target}")
+    run("git pull --rebase origin #{current_target}")
+    run("git merge #{current_branch}")
+    run("git push origin #{current_target}")
+    run("git push origin :#{current_branch}")
+    run("git branch -d #{current_branch}")
     task = PivotalTracker::Story.find(current_task_id, @project.id)
     deliver_task(task)
   end
 
   def cleanup
     # Update our list of remotes
-    `git fetch`
-    `git remote prune origin`
+    run("git fetch")
+    run("git remote prune origin")
 
     # Remove local branches fully merged with origin/master
-    `git branch --merged origin/master | grep -v 'master$' | xargs git branch -D`
+    run("git branch --merged origin/master | grep -v 'master$' | xargs git branch -D")
 
     congrats('All clean!')
   end
@@ -92,5 +91,13 @@ class PT::Flow::UI < PT::UI
 
   def current_task_id
     current_branch.split('-').last
+  end
+
+  def run(command)
+    title(command)
+    unless system(command)
+      error("Error running: #{command}")
+      exit(false)
+    end
   end
 end
