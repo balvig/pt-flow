@@ -7,12 +7,8 @@ class PT::Flow::UI < PT::UI
   def start
     tasks = @client.get_work(@project)
     table = PT::TasksTable.new(tasks)
-    if @params[0]
-      task = table[@params[0].to_i]
-    else
-      title("Available tasks in #{project_to_s}")
-      task = select("Please select a task to start working on", table)
-    end
+    title("Available tasks in #{project_to_s}")
+    task = select("Please select a task to start working on", table)
 
     estimate_task(task, ask("How many points do you estimate for it? (#{@project.point_scale})")) if task.estimate && task.estimate < 0
     assign_task(task, @local_config[:user_name])
@@ -24,7 +20,7 @@ class PT::Flow::UI < PT::UI
     `git push origin #{current_branch}`
     task = PivotalTracker::Story.find(current_task_id, @project.id)
     finish_task(task)
-    pull_request_url = "#{github_page_url}/pull/new/#{current_branch}...#{current_target}?title=#{task.name} [##{task.id}]&body=#{task.url}"
+    pull_request_url = "#{github_page_url}/pull/new/#{current_target}...#{current_branch}?title=#{task.name} [##{task.id}]&body=#{task.url}"
     `open '#{pull_request_url}'`
   end
 
