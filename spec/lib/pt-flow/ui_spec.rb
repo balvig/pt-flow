@@ -59,14 +59,36 @@ describe PT::Flow::UI do
 
   describe '#finish' do
     before do
-      system('git checkout -B new_feature-12345')
+      #TODO: Stubbed  endpoint ALWAYS returns story  4459994, need a way to check it is actually getting the right id from the branch
+      system('git checkout -B new_feature-4459994')
       system('git remote add origin git@github.com:balvig/pt-flow.git')
     end
 
     it "pushes the current branch to origin, flags the story as finished, and opens a github pull request" do
-      PT::Flow::UI.any_instance.should_receive(:run).with('git push origin new_feature-12345')
-      PT::Flow::UI.any_instance.should_receive(:run).with("open 'https://github.com/balvig/pt-flow/pull/new/new_feature...new_feature-12345?title=Unestimated Feature [#4459994]&body=http://www.pivotaltracker.com/story/show/4459994'")
+      PT::Flow::UI.any_instance.should_receive(:run).with('git push origin new_feature-4459994')
+      PT::Flow::UI.any_instance.should_receive(:run).with("open 'https://github.com/balvig/pt-flow/pull/new/new_feature...new_feature-4459994?title=Unestimated Feature [#4459994]&body=http://www.pivotaltracker.com/story/show/4459994'")
       PT::Flow::UI.new %w{ finish }
+      WebMock.should have_requested(:put, "#{endpoint}/projects/102622/stories/4459994").with(body: /<current_state>finished<\/current_state>/)
+    end
+  end
+
+  describe '#deliver' do
+    before do
+      #TODO: Stubbed  endpoint ALWAYS returns story  4459994, need a way to check it is actually getting the right id from the branch
+      system('git checkout -B new_feature-4459994')
+    end
+
+    it "pushes the current branch to origin, flags the story as finished, and opens a github pull request" do
+      PT::Flow::UI.any_instance.should_receive(:run).with('git fetch')
+      PT::Flow::UI.any_instance.should_receive(:run).with('git checkout new_feature')
+      PT::Flow::UI.any_instance.should_receive(:run).with('git pull --rebase origin new_feature')
+      PT::Flow::UI.any_instance.should_receive(:run).with('git merge new_feature-4459994')
+      PT::Flow::UI.any_instance.should_receive(:run).with('git push origin new_feature')
+      PT::Flow::UI.any_instance.should_receive(:run).with('git push origin :new_feature-4459994')
+      PT::Flow::UI.any_instance.should_receive(:run).with('git branch -d new_feature-4459994')
+
+      PT::Flow::UI.new %w{ deliver }
+      WebMock.should have_requested(:put, "#{endpoint}/projects/102622/stories/4459994").with(body: /<current_state>delivered<\/current_state>/)
     end
   end
 end
