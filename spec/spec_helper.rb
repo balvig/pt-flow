@@ -6,6 +6,8 @@ PT::UI.send(:remove_const, :LOCAL_CONFIG_PATH)
 PT::UI::GLOBAL_CONFIG_PATH = File.join(File.dirname(__FILE__), 'fixtures', 'global_config.yml')
 PT::UI::LOCAL_CONFIG_PATH = File.join(File.dirname(__FILE__), 'fixtures', 'local_config.yml')
 
+Dir[File.join(File.dirname(__FILE__),'support', '**', '*.rb')].each {|f| require f}
+
 RSpec.configure do |config|
   config.mock_with :rspec
 end
