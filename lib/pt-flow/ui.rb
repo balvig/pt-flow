@@ -70,11 +70,6 @@ class PT::Flow::UI < PT::UI
     end
   end
 
-  def error(*msg)
-    super
-    exit(false)
-  end
-
   def github_page_url
     repo_url = `git config --get remote.origin.url`.strip
     stub = repo_url.match(/:(\S+\/\S+)\.git/)[1]
@@ -95,9 +90,12 @@ class PT::Flow::UI < PT::UI
 
   def run(command)
     title(command)
-    unless system(command)
-      error("Error running: #{command}")
-      exit(false)
-    end
+    error("Error running: #{command}") unless system(command)
   end
+
+  def error(*msg)
+    super
+    exit(false)
+  end
+
 end
