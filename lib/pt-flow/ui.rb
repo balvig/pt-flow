@@ -81,11 +81,11 @@ class PT::Flow::UI < PT::UI
   end
 
   def current_target
-    current_branch.split('-').first
+    current_branch.sub(current_task_id, '').chomp('-')
   end
 
   def current_task_id
-    current_branch.split('-').last
+    current_branch[/\d+$/] || ''
   end
 
   def run(command)
