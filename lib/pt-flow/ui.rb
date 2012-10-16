@@ -44,7 +44,7 @@ class PT::Flow::UI < PT::UI
     run("git branch --merged origin/master | grep -v 'master$' | xargs git branch -D")
 
     # Remove remote branches fully merged with origin/master
-    run("git branch -r --merged origin/master | sed 's/ *origin\///' | grep -v 'master$' | xargs -I% git push origin :%")
+    run("git branch -r --merged origin/master | sed 's/ *origin\\///' | grep -v 'master$' | xargs -I% git push origin :%")
 
     # Prune!
     run("git remote prune origin")
