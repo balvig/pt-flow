@@ -20,7 +20,7 @@ module PT::Flow
       run("git push origin #{current_branch}")
       task = PivotalTracker::Story.find(current_task_id, @project.id)
       title = task.name.gsub('"',"'") + " [##{task.id}]"
-      run("hub pull-request -b #{repo.user}:#{current_target} \"#{title}\"")
+      run("hub pull-request -b #{current_target} -h #{repo.user}:#{current_branch} \"#{title}\"")
       finish_task(task)
     end
 
