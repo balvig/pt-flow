@@ -1,5 +1,6 @@
 module PT::Flow
   class UI < PT::UI
+
     def my_work #default command
       help
     end
@@ -20,7 +21,7 @@ module PT::Flow
       run("git push origin #{current_branch}")
       task = PivotalTracker::Story.find(current_task_id, @project.id)
       title = task.name.gsub('"',"'") + " [##{task.id}]"
-      run("hub pull-request -b #{github_user}:#{current_target} \"#{title}\"")
+      run("hub pull-request -b #{repo.user}:#{current_target} \"#{title}\"")
       finish_task(task)
     end
 
@@ -37,14 +38,13 @@ module PT::Flow
     end
 
     def review
-      github = Github.new(oauth_token: '8ebcb1284d00d8eb193e290a50c8f34f169eb043')
-      #pull_requests = github.pull_requests.all(github_user, github_repo)
-      pull_requests = github.pull_requests.all('cookpad', 'santacruz')
-      table = PullRequestsTable.new(pull_requests)
+      table = PullRequestsTable.new(repo.pull_requests)
       pull_request = select("Please select a pull request to review", table)
       run("git fetch")
       run("git checkout #{pull_request.head.ref}")
       run("open #{pull_request.html_url}") if ask('Open github page? (y/n)') == 'y'
+    rescue Github::Error::Unauthorized => e
+      error("Error from github: #{e.message}")
     end
 
     def cleanup
@@ -75,6 +75,10 @@ module PT::Flow
 
     private
 
+    def repo
+      Repo.new
+    end
+
     def assign_task(task, owner)
       result = @client.assign_task(@project, task, owner)
       if result.errors.any?
@@ -82,18 +86,6 @@ module PT::Flow
       else
         congrats("Task assigned to #{owner}")
       end
-    end
-
-    def github_user
-      github_stub.split('/').first
-    end
-
-    def github_repo
-      github_stub.split('/').last
-    end
-
-    def github_stub
-      @github_stub ||= `git config --get remote.origin.url`.strip.match(/:(\S+\/\S+)\.git/)[1]
     end
 
     def current_branch
