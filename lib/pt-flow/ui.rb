@@ -53,13 +53,16 @@ module PT::Flow
       run("git fetch")
       run("git remote prune origin")
 
-      # Remove local branches fully merged with origin/master
+      # Only clean out merged story branches for current topic
+      filter = "#{current_target}-[0-9]*$"
+
+      # Remove local branches fully merged with origin/current_target
       #run("git branch --merged origin/#{current_target} | grep -v '#{current_target}$' | xargs git branch -D")
-      run("git branch --merged origin/#{current_target} | grep -v '#{current_target}$'")
+      run("git branch --merged origin/#{current_target} | grep '#{filter}'")
 
       # Remove remote branches fully merged with origin/master
       #run("git branch -r --merged origin/#{current_target} | sed 's/ *origin\\///' | grep -v '#{current_target}$' | xargs -I% git push origin :%")
-      run("git branch -r --merged origin/#{current_target} | sed 's/ *origin\\///' | grep -v '#{current_target}$'")
+      run("git branch -r --merged origin/#{current_target} | sed 's/ *origin\\///' | grep -v '#{filter}'")
 
       congrats('All clean!')
     end
