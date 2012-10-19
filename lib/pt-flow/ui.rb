@@ -42,7 +42,7 @@ module PT::Flow
       pull_request = select("Please select a pull request to review", table)
       run("git fetch")
       run("git checkout #{pull_request.head.ref}")
-      run("open #{pull_request.html_url}")
+      run("open #{pull_request.html_url}/files")
     rescue Github::Error::Unauthorized => e
       error("Error from github: #{e.message}")
     end
