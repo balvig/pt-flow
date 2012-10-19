@@ -1,4 +1,5 @@
 class PT::Flow::UI < PT::UI
+  require 'shellwords'
 
   def my_work #default command
     help
