@@ -20,7 +20,7 @@ class PT::Flow::UI < PT::UI
   def finish
     run("git push origin #{current_branch}")
     task = PivotalTracker::Story.find(current_task_id, @project.id)
-    run("hub -b #{current_target} '#{task.name.shellescape}'")
+    run("hub pull-request -b #{current_target} '#{task.name.shellescape}'")
     finish_task(task)
   end
 
