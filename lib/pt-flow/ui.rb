@@ -19,7 +19,7 @@ class PT::Flow::UI < PT::UI
     run("git push origin #{current_branch}")
     task = PivotalTracker::Story.find(current_task_id, @project.id)
     title = task.name.gsub('"',"'") + " [##{task.id}]"
-    run("hub pull-request -b #{current_target} \"#{title}\"")
+    run("hub pull-request -b #{github_user}:#{current_target} \"#{title}\"")
     finish_task(task)
   end
 
@@ -72,10 +72,16 @@ class PT::Flow::UI < PT::UI
     end
   end
 
-  def github_page_url
-    repo_url = `git config --get remote.origin.url`.strip
-    stub = repo_url.match(/:(\S+\/\S+)\.git/)[1]
-    "https://github.com/#{stub}"
+  def github_user
+    github_stub.split('/').first
+  end
+
+  def github_repo
+    github_stub.split('/').last
+  end
+
+  def github_stub
+    @github_stub ||= `git config --get remote.origin.url`.strip.match(/:(\S+\/\S+)\.git/)[1]
   end
 
   def current_branch

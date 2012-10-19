@@ -66,7 +66,7 @@ describe PT::Flow::UI do
 
     it "pushes the current branch to origin, flags the story as finished, and opens a github pull request" do
       PT::Flow::UI.any_instance.should_receive(:run).with('git push origin new_feature-4459994')
-      PT::Flow::UI.any_instance.should_receive(:run).with("hub pull-request -b new_feature \"It's an Unestimated Feature [#4459994]\"")
+      PT::Flow::UI.any_instance.should_receive(:run).with("hub pull-request -b balvig:new_feature \"It's an Unestimated Feature [#4459994]\"")
       PT::Flow::UI.new %w{ finish }
       WebMock.should have_requested(:put, "#{endpoint}/projects/102622/stories/4459994").with(body: /<current_state>finished<\/current_state>/)
     end
