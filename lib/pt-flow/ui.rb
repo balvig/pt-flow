@@ -49,6 +49,8 @@ module PT::Flow
     end
 
     def cleanup
+      title("Cleaning merged story branches for [#{current_target}]")
+
       # Update our list of remotes
       run("git fetch")
       run("git remote prune origin")
