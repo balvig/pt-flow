@@ -54,10 +54,12 @@ module PT::Flow
       run("git remote prune origin")
 
       # Remove local branches fully merged with origin/master
-      run("git branch --merged origin/master | grep -v 'master$' | xargs git branch -D")
+      #run("git branch --merged origin/#{current_target} | grep -v '#{current_target}$' | xargs git branch -D")
+      run("git branch --merged origin/#{current_target} | grep -v '#{current_target}$'")
 
       # Remove remote branches fully merged with origin/master
-      run("git branch -r --merged origin/master | sed 's/ *origin\\///' | grep -v 'master$' | xargs -I% git push origin :%")
+      #run("git branch -r --merged origin/#{current_target} | sed 's/ *origin\\///' | grep -v '#{current_target}$' | xargs -I% git push origin :%")
+      run("git branch -r --merged origin/#{current_target} | sed 's/ *origin\\///' | grep -v '#{current_target}$'")
 
       congrats('All clean!')
     end
