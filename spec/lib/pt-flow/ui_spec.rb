@@ -59,14 +59,14 @@ describe PT::Flow::UI do
 
   describe '#finish' do
     before do
-      #TODO: Stubbed  endpoint ALWAYS returns story  4459994, need a way to check it is actually getting the right id from the branch
+      #TODO: Stubbed endpoint ALWAYS returns story 4459994, need a way to check it is actually getting the right id from the branch
       system('git checkout -B new_feature-4459994')
       system('git remote add origin git@github.com:balvig/pt-flow.git')
     end
 
     it "pushes the current branch to origin, flags the story as finished, and opens a github pull request" do
       PT::Flow::UI.any_instance.should_receive(:run).with('git push origin new_feature-4459994')
-      PT::Flow::UI.any_instance.should_receive(:run).with("open 'https://github.com/balvig/pt-flow/pull/new/new_feature...new_feature-4459994?title=It%27s+an+Unestimated+Feature [#4459994]&body=http://www.pivotaltracker.com/story/show/4459994'")
+      PT::Flow::UI.any_instance.should_receive(:run).with("hub pull-request -b new_feature \"It's an Unestimated Feature\"")
       PT::Flow::UI.new %w{ finish }
       WebMock.should have_requested(:put, "#{endpoint}/projects/102622/stories/4459994").with(body: /<current_state>finished<\/current_state>/)
     end
@@ -74,7 +74,7 @@ describe PT::Flow::UI do
 
   describe '#deliver' do
     before do
-      #TODO: Stubbed  endpoint ALWAYS returns story  4459994, need a way to check it is actually getting the right id from the branch
+      #TODO: Stubbed endpoint ALWAYS returns story 4459994, need a way to check it is actually getting the right id from the branch
       system('git checkout -B new_feature-4459994')
     end
 

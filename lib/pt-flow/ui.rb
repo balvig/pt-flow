@@ -18,8 +18,8 @@ class PT::Flow::UI < PT::UI
   def finish
     run("git push origin #{current_branch}")
     task = PivotalTracker::Story.find(current_task_id, @project.id)
-    body = task.name.gsub("'",'"')
-    run("hub pull-request -b #{current_target} '#{body}'")
+    title = task.name.gsub('"',"'")
+    run("hub pull-request -b #{current_target} \"#{title}\"")
     finish_task(task)
   end
 
