@@ -10,11 +10,10 @@ module PT::Flow
       table = PT::TasksTable.new(tasks)
       title("Available tasks in #{project_to_s}")
       task = select("Please select a task to start working on", table)
-
       estimate_task(task, ask("How many points do you estimate for it? (#{@project.point_scale})")) if task.estimate && task.estimate < 0
       assign_task(task, @local_config[:user_name])
       start_task(task)
-      run("git checkout -B #{current_target}-#{task.id}")
+      run("git checkout -b #{current_target}-#{task.id}")
     end
 
     def finish
