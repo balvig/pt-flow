@@ -12,6 +12,7 @@ Install the gem:
 
 - flow start
 - flow finish
+- flow review
 - flow deliver
 
 ### Committer
@@ -28,8 +29,8 @@ $ flow finish
 ### Reviewer
 
 ```bash
-$ git fetch
-$ git checkout master-325325
+$ flow review
+# checks out branch and opens github page
 # run tests, review code etc...
 
 $ flow deliver

@@ -41,7 +41,7 @@ module PT::Flow
       pull_request = select("Please select a pull request to review", table)
       run("git fetch")
       run("git checkout #{pull_request.head.ref}")
-      run("open #{pull_request.html_url}") if ask('Open github page? (y/n)') == 'y'
+      run("open #{pull_request.html_url}")
     rescue Github::Error::Unauthorized => e
       error("Error from github: #{e.message}")
     end
@@ -68,8 +68,9 @@ module PT::Flow
       title("Command line usage")
       puts("flow start                             # start working on a story")
       puts("flow finish                            # finish a story and create a pull request")
-      puts("flow deliver                           # merge current story branch and clean up")
-      puts("flow cleanup                           # deleted merged local branches and prune origin")
+      puts("flow review                            # review a pull request")
+      puts("flow deliver                           # merge current branch and clean up")
+      puts("flow cleanup                           # deleted merged local/remote branches and prune origin")
     end
 
     private
