@@ -2,6 +2,7 @@ module PT::Flow
   class UI < PT::UI
 
     def my_work #default command
+      super
       help
     end
 
