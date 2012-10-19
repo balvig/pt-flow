@@ -59,14 +59,12 @@ module PT::Flow
       filter = "#{current_target}-[0-9]*$"
 
       # Remove local branches fully merged with origin/current_target
-      #run("git branch --merged origin/#{current_target} | grep -v '#{current_target}$' | xargs git branch -D")
-      run("git branch --merged origin/#{current_target} | grep '#{filter}'")
+      run("git branch --merged origin/#{current_target} | grep '#{filter}' | xargs git branch -D")
 
       # Remove remote branches fully merged with origin/master
-      #run("git branch -r --merged origin/#{current_target} | sed 's/ *origin\\///' | grep -v '#{current_target}$' | xargs -I% git push origin :%")
-      run("git branch -r --merged origin/#{current_target} | sed 's/ *origin\\///' | grep '#{filter}'")
+      run("git branch -r --merged origin/#{current_target} | sed 's/ *origin\\///' | grep '#{filter}' | xargs -I% git push origin :%")
 
-      congrats('All clean!')
+      congrats("Merged #{current_target} branches cleaned out!")
     end
 
     def help
