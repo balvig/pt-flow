@@ -64,7 +64,7 @@ module PT::Flow
       # Remove remote branches fully merged with origin/master
       run("git branch -r --merged origin/#{current_target} | sed 's/ *origin\\///' | grep '#{filter}' | xargs -I% git push origin :%")
 
-      congrats("Merged #{current_target} branches cleaned out!")
+      congrats("Deleted branches merged with [#{current_target}]")
     end
 
     def help
