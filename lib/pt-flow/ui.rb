@@ -1,4 +1,5 @@
 class PT::Flow::UI < PT::UI
+  require 'shellwords'
 
   def my_work #default command
     help
@@ -19,9 +20,8 @@ class PT::Flow::UI < PT::UI
   def finish
     run("git push origin #{current_branch}")
     task = PivotalTracker::Story.find(current_task_id, @project.id)
+    run("hub pull-request -b #{current_target} '#{task.name.shellescape}'")
     finish_task(task)
-    pull_request_url = "#{github_page_url}/pull/new/#{current_target}...#{current_branch}?title=#{CGI::escape(task.name)} [##{task.id}]&body=#{task.url}"
-    run("open '#{pull_request_url}'")
   end
 
   def deliver
