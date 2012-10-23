@@ -12,7 +12,7 @@ module PT::Flow
     end
 
     def target
-      name.split('-').first
+      name.split('.').first
     end
 
     def task_id

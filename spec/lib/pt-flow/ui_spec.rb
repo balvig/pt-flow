@@ -25,7 +25,7 @@ describe PT::Flow::UI do
         WebMock.should have_requested(:put, "#{endpoint}/projects/102622/stories/4459994").with(body: /<owned_by>Jon Mischo<\/owned_by>/)
         WebMock.should have_requested(:put, "#{endpoint}/projects/102622/stories/4459994").with(body: /<current_state>started<\/current_state>/)
 
-        current_branch.should == 'master.it-s-an-unestimated-feature.4459994'
+        current_branch.should == 'master.as-a-user-i-should-see-an-unestimated-feature-with-a-fairly-l.4459994'
       end
     end
 
@@ -47,7 +47,7 @@ describe PT::Flow::UI do
     end
 
     context 'when run from an existing story branch' do
-      before { system('git checkout -B new_feature-12345') }
+      before { system('git checkout -B new_feature.as-a-user-i-should.4459994') }
 
       it "creates a branch within the same namespace" do
         prompt.should_receive(:ask).and_return('3')
@@ -60,13 +60,13 @@ describe PT::Flow::UI do
   describe '#finish' do
     before do
       #TODO: Stubbed endpoint ALWAYS returns story 4459994, need a way to check it is actually getting the right id from the branch
-      system('git checkout -B new_feature-4459994')
+      system('git checkout -B new_feature.as-a-user-i-should.4459994')
       system('git remote add origin git@github.com:cookpad/pt-flow.git')
     end
 
     it "pushes the current branch to origin, flags the story as finished, and opens a github pull request" do
-      PT::Flow::UI.any_instance.should_receive(:run).with('git push origin new_feature-4459994')
-      PT::Flow::UI.any_instance.should_receive(:run).with("hub pull-request -b new_feature -h cookpad:new_feature-4459994 \"It's an Unestimated Feature [#4459994]\"")
+      PT::Flow::UI.any_instance.should_receive(:run).with('git push origin new_feature.as-a-user-i-should.4459994')
+      PT::Flow::UI.any_instance.should_receive(:run).with("hub pull-request -b new_feature -h cookpad:new_feature.as-a-user-i-should.4459994 \"As a user I should see an Unestimated Feature with a fairly long name [#4459994]\"")
       PT::Flow::UI.any_instance.should_receive(:run).with('git checkout new_feature')
       PT::Flow::UI.new %w{ finish }
       WebMock.should have_requested(:put, "#{endpoint}/projects/102622/stories/4459994").with(body: /<current_state>finished<\/current_state>/)
@@ -76,17 +76,17 @@ describe PT::Flow::UI do
   describe '#deliver' do
     before do
       #TODO: Stubbed endpoint ALWAYS returns story 4459994, need a way to check it is actually getting the right id from the branch
-      system('git checkout -B new_feature-4459994')
+      system('git checkout -B new_feature.as-a-user-i-should.4459994')
     end
 
     it "pushes the current branch to origin, flags the story as finished, and opens a github pull request" do
       PT::Flow::UI.any_instance.should_receive(:run).with('git fetch')
       PT::Flow::UI.any_instance.should_receive(:run).with('git checkout new_feature')
       PT::Flow::UI.any_instance.should_receive(:run).with('git pull --rebase origin new_feature')
-      PT::Flow::UI.any_instance.should_receive(:run).with('git merge new_feature-4459994')
+      PT::Flow::UI.any_instance.should_receive(:run).with('git merge new_feature.as-a-user-i-should.4459994')
       PT::Flow::UI.any_instance.should_receive(:run).with('git push origin new_feature')
-      PT::Flow::UI.any_instance.should_receive(:run).with('git push origin :new_feature-4459994')
-      PT::Flow::UI.any_instance.should_receive(:run).with('git branch -d new_feature-4459994')
+      PT::Flow::UI.any_instance.should_receive(:run).with('git push origin :new_feature.as-a-user-i-should.4459994')
+      PT::Flow::UI.any_instance.should_receive(:run).with('git branch -d new_feature.as-a-user-i-should.4459994')
 
       PT::Flow::UI.new %w{ deliver }
       WebMock.should have_requested(:put, "#{endpoint}/projects/102622/stories/4459994").with(body: /<current_state>delivered<\/current_state>/)
