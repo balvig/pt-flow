@@ -25,7 +25,7 @@ describe PT::Flow::UI do
         WebMock.should have_requested(:put, "#{endpoint}/projects/102622/stories/4459994").with(body: /<owned_by>Jon Mischo<\/owned_by>/)
         WebMock.should have_requested(:put, "#{endpoint}/projects/102622/stories/4459994").with(body: /<current_state>started<\/current_state>/)
 
-        current_branch.should == 'master-4459994'
+        current_branch.should == 'master.it-s-an-unestimated-feature.4459994'
       end
     end
 
@@ -42,7 +42,7 @@ describe PT::Flow::UI do
       it "creates an appropriately namespaced branch" do
         prompt.should_receive(:ask).and_return('3')
         PT::Flow::UI.new %w{ start }
-        current_branch.should == 'new_feature-4460038'
+        current_branch.should == 'new_feature.this-is-for-comments.4460038'
       end
     end
 
@@ -52,7 +52,7 @@ describe PT::Flow::UI do
       it "creates a branch within the same namespace" do
         prompt.should_receive(:ask).and_return('3')
         PT::Flow::UI.new %w{ start }
-        current_branch.should == 'new_feature-4460038'
+        current_branch.should == 'new_feature.this-is-for-comments.4460038'
       end
     end
   end

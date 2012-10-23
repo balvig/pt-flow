@@ -12,8 +12,6 @@ module PT::Flow
     end
 
     def target
-      #require 'pry'
-      #binding.pry
       name.split('-').first
     end
 
