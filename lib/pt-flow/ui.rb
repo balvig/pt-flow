@@ -11,31 +11,33 @@ module PT::Flow
       table = PT::TasksTable.new(tasks)
       title("Available tasks in #{project_to_s}")
       task = select("Please select a task to start working on", table)
-      puts "master.#{task.name.parameterize[0..80]}.#{task.id}"
       estimate_task(task, ask("How many points do you estimate for it? (#{@project.point_scale})")) if task.estimate && task.estimate < 0
       assign_task(task, @local_config[:user_name])
       start_task(task)
-      run("git checkout -b #{Branch.new(current_target, task).name}")
+      run("git checkout -b #{StoryBranch.new(task)}")
     end
 
     def finish
-      run("git push origin #{current_branch}")
-      task = PivotalTracker::Story.find(current_task_id, @project.id)
+      run("git push origin #{branch}")
+      task = PivotalTracker::Story.find(branch.task_id, @project.id)
       title = task.name.gsub('"',"'") + " [##{task.id}]"
-      run("hub pull-request -b #{current_target} -h #{repo.user}:#{current_branch} \"#{title}\"")
-      run("git checkout #{current_target}")
+
+      run("hub pull-request -b #{branch.target} -h #{repo.user}:#{branch} \"#{title}\"")
+      run("git checkout #{branch.target}")
       finish_task(task)
     end
 
     def deliver
+      source = branch
+      target = branch.target
       run('git fetch')
-      run("git checkout #{current_target}")
-      run("git pull --rebase origin #{current_target}")
-      run("git merge #{current_branch}")
-      run("git push origin #{current_target}")
-      run("git push origin :#{current_branch}")
-      run("git branch -d #{current_branch}")
-      task = PivotalTracker::Story.find(current_task_id, @project.id)
+      run("git checkout #{target}")
+      run("git pull --rebase origin #{target}")
+      run("git merge #{source}")
+      run("git push origin #{target}")
+      run("git push origin :#{source}")
+      run("git branch -d #{source}")
+      task = PivotalTracker::Story.find(source.task_id, @project.id)
       deliver_task(task)
     end
 
@@ -50,22 +52,22 @@ module PT::Flow
     end
 
     def cleanup
-      title("Cleaning merged story branches for [#{current_target}]")
+      title("Cleaning merged story branches for [#{branch.target}]")
 
       # Update our list of remotes
       run("git fetch")
       run("git remote prune origin")
 
       # Only clean out merged story branches for current topic
-      filter = "#{current_target}-[0-9]*$"
+      filter = "#{branch.target}-[0-9]*$"
 
       # Remove local branches fully merged with origin/current_target
-      run("git branch --merged origin/#{current_target} | grep '#{filter}' | xargs git branch -D")
+      run("git branch --merged origin/#{branch.target} | grep '#{filter}' | xargs git branch -D")
 
       # Remove remote branches fully merged with origin/master
-      run("git branch -r --merged origin/#{current_target} | sed 's/ *origin\\///' | grep '#{filter}' | xargs -I% git push origin :%")
+      run("git branch -r --merged origin/#{branch.target} | sed 's/ *origin\\///' | grep '#{filter}' | xargs -I% git push origin :%")
 
-      congrats("Deleted branches merged with [#{current_target}]")
+      congrats("Deleted branches merged with [#{branch.target}]")
     end
 
     def help
@@ -83,8 +85,12 @@ module PT::Flow
 
     private
 
+    def branch
+      @branch ||= Branch.current
+    end
+
     def repo
-      Repo.new
+      @repo ||= Repo.new
     end
 
     def assign_task(task, owner)
@@ -94,18 +100,6 @@ module PT::Flow
       else
         congrats("Task assigned to #{owner}")
       end
-    end
-
-    def current_branch
-      @current_branch ||= `git rev-parse --abbrev-ref HEAD`.strip
-    end
-
-    def current_target
-      current_branch.sub(current_task_id, '').chomp('-')
-    end
-
-    def current_task_id
-      current_branch[/\d+$/] || ''
     end
 
     def run(command)

@@ -1,26 +1,28 @@
 module PT::Flow
   class Branch
-    require 'active_support/inflector'
 
-    def
+    attr_accessor :name
 
-    def initialize(target, story)
-      @target = target
-      @story = story
+    def self.current
+      new(`git rev-parse --abbrev-ref HEAD`.strip)
+    end
+
+    def initialize(name)
+      @name = name
     end
 
     def target
-
-    end
-    def
-
-    def current_target
-      current_branch.sub(current_task_id, '').chomp('-')
+      #require 'pry'
+      #binding.pry
+      name.split('-').first
     end
 
+    def task_id
+      name[/\d+$/] || ''
+    end
 
-    def name
-      "#{target}.#{story.name.parameterize[0..80]}.#{story.id}"
+    def to_s
+      name
     end
 
   end
