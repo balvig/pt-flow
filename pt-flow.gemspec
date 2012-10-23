@@ -18,6 +18,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'pt'
   gem.add_dependency 'hub'
   gem.add_dependency 'github_api'
+  gem.add_dependency 'active_support'
 
   gem.add_development_dependency 'rspec', '~> 2.9'
   gem.add_development_dependency 'webmock'
