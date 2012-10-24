@@ -66,7 +66,7 @@ describe PT::Flow::UI do
 
     it "pushes the current branch to origin, flags the story as finished, and opens a github pull request" do
       PT::Flow::UI.any_instance.should_receive(:run).with('git push origin new_feature.as-a-user-i-should.4459994')
-      PT::Flow::UI.any_instance.should_receive(:run).with("hub pull-request -b new_feature -h cookpad:new_feature.as-a-user-i-should.4459994 \"As a user I should see an Unestimated Feature with a fairly long name [#4459994]\"")
+      PT::Flow::UI.any_instance.should_receive(:run).with("hub pull-request -b new_feature -h cookpad:new_feature.as-a-user-i-should.4459994 \"As a user I should see an Unestimated Feature with a fairly long name [Delivers #4459994]\"")
       PT::Flow::UI.any_instance.should_receive(:run).with('git checkout new_feature')
       PT::Flow::UI.new %w{ finish }
       WebMock.should have_requested(:put, "#{endpoint}/projects/102622/stories/4459994").with(body: /<current_state>finished<\/current_state>/)
@@ -80,6 +80,7 @@ describe PT::Flow::UI do
     end
 
     it "pushes the current branch to origin, flags the story as finished, and opens a github pull request" do
+      pending 'disabling deliver for now'
       PT::Flow::UI.any_instance.should_receive(:run).with('git fetch')
       PT::Flow::UI.any_instance.should_receive(:run).with('git checkout new_feature')
       PT::Flow::UI.any_instance.should_receive(:run).with('git pull --rebase origin new_feature')
