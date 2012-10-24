@@ -14,7 +14,7 @@ module PT::Flow
       estimate_task(task, ask("How many points do you estimate for it? (#{@project.point_scale})")) if task.estimate && task.estimate < 0
       assign_task(task, @local_config[:user_name])
       start_task(task)
-      run("git checkout -b #{StoryBranch.new(task)}")
+      run("git checkout -b #{Branch.from_task(task)}")
     end
 
     def finish
