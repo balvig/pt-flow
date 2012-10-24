@@ -20,7 +20,7 @@ module PT::Flow
     def finish
       run("git push origin #{branch}")
       task = PivotalTracker::Story.find(branch.task_id, @project.id)
-      title = task.name.gsub('"',"'") + " [##{task.id}]"
+      title = task.name.gsub('"',"'") + " [Delivers ##{task.id}]"
 
       run("hub pull-request -b #{branch.target} -h #{repo.user}:#{branch} \"#{title}\"")
       run("git checkout #{branch.target}")
@@ -28,24 +28,25 @@ module PT::Flow
     end
 
     def deliver
-      source = branch
-      target = branch.target
-      run('git fetch')
-      run("git checkout #{target}")
-      run("git pull --rebase origin #{target}")
-      run("git merge #{source}")
-      run("git push origin #{target}")
-      run("git push origin :#{source}")
-      run("git branch -d #{source}")
-      task = PivotalTracker::Story.find(source.task_id, @project.id)
-      deliver_task(task)
+      review
+      #source = branch
+      #target = branch.target
+      #run('git fetch')
+      #run("git checkout #{target}")
+      #run("git pull --rebase origin #{target}")
+      #run("git merge #{source}")
+      #run("git push origin #{target}")
+      #run("git push origin :#{source}")
+      #run("git branch -d #{source}")
+      #task = PivotalTracker::Story.find(source.task_id, @project.id)
+      #deliver_task(task)
     end
 
     def review
       table = PullRequestsTable.new(repo.pull_requests)
       pull_request = select("Please select a pull request to review", table)
-      run("git fetch")
-      run("git checkout #{pull_request.head.ref}")
+      #run("git fetch")
+      #run("git checkout #{pull_request.head.ref}")
       run("open #{pull_request.html_url}/files")
     rescue Github::Error::Unauthorized => e
       error("Error from github: #{e.message}")
@@ -79,7 +80,7 @@ module PT::Flow
       puts("flow start                             # start working on a story")
       puts("flow finish                            # finish a story and create a pull request")
       puts("flow review                            # review a pull request")
-      puts("flow deliver                           # merge current branch and clean up")
+      #puts("flow deliver                           # merge current branch and clean up")
       puts("flow cleanup                           # deleted merged local/remote branches and prune origin")
     end
 
