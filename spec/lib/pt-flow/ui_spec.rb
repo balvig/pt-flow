@@ -9,6 +9,7 @@ describe PT::Flow::UI do
     HighLine.stub(new: prompt)
     stub_request(:get, /projects$/).to_return(body: fixture_file('projects.xml'))
     stub_request(:get, /stories\?/).to_return(body: fixture_file('stories.xml'))
+    stub_request(:post, /stories$/).to_return(body: fixture_file('chore.xml'))
     stub_request(:any, /stories\/\d+/).to_return(body: fixture_file('story.xml'))
   end
 
@@ -53,6 +54,21 @@ describe PT::Flow::UI do
         prompt.should_receive(:ask).and_return('3')
         PT::Flow::UI.new %w{ start }
         current_branch.should == 'new_feature.this-is-for-comments.4460038'
+      end
+    end
+
+    context 'given a string' do
+      it "creates a new task with that name" do
+        prompt.should_receive(:ask).with("Type? (c)hore, (b)ug, (f)eature".bold).and_return('c')
+
+        PT::Flow::UI.new ['start','a new feature']
+
+        WebMock.should have_requested(:post, "#{endpoint}/projects/102622/stories").with(body: /<name>a new feature<\/name>/).with(body: /<story_type>chore<\/story_type>/).with(body: /<requested_by>Jon Mischo<\/requested_by>/)
+        WebMock.should have_requested(:put, "#{endpoint}/projects/102622/stories/4459994").with(body: /<owned_by>Jon Mischo<\/owned_by>/)
+        WebMock.should have_requested(:put, "#{endpoint}/projects/102622/stories/4459994").with(body: /<current_state>started<\/current_state>/)
+
+        #current_branch.should == 'master.as-a-user-i-should-see-an-unestimated-feature-with-a-fairly-l.4459994'
+
       end
     end
   end
