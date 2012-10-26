@@ -58,7 +58,7 @@ describe PT::Flow::UI do
     end
 
     context 'given a string' do
-      it "creates a new task with that name" do
+      it "creates and starts a new story with that name" do
         prompt.should_receive(:ask).with("Type? (c)hore, (b)ug, (f)eature".bold).and_return('c')
 
         PT::Flow::UI.new ['start','a new feature']
