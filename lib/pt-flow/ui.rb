@@ -7,10 +7,13 @@ module PT::Flow
     end
 
     def start
-      tasks = @client.get_work(@project)
-      table = PT::TasksTable.new(tasks)
-      title("Available tasks in #{project_to_s}")
-      task = select("Please select a task to start working on", table)
+      if @params[0]
+        task = create
+      else
+        table = PT::TasksTable.new(@client.get_work(@project))
+        title("Available tasks in #{project_to_s}")
+        task = select("Please select a task to start working on", table)
+      end
       estimate_task(task, ask("How many points do you estimate for it? (#{@project.point_scale})")) if task.estimate && task.estimate < 0
       assign_task(task, @local_config[:user_name])
       start_task(task)
@@ -25,6 +28,25 @@ module PT::Flow
       run("hub pull-request -b #{branch.target} -h #{repo.user}:#{branch} \"#{title}\"")
       run("git checkout #{branch.target}")
       finish_task(task)
+    end
+
+    def create
+      name = @params[0] || ask("Name for the new story:")
+      task_type = case ask('Type? (c)hore, (b)ug, (f)eature')
+                  when 'c', 'chore'
+                    'chore'
+                  when 'b', 'bug'
+                    'bug'
+                  else
+                    'feature'
+                  end
+      task = @project.stories.create(name: name, requested_by: @local_config[:user_name], story_type: task_type)
+      if task.errors.any?
+        error(task.errors.errors)
+      else
+        congrats("#{task_type} created: #{task.url}")
+        task
+      end
     end
 
     def deliver
