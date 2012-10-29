@@ -8,6 +8,10 @@ Install the gem:
 
     $ gem install pt-flow
 
+Set up webhook for Pivotal Tracker:
+
+    https://github.com/#{repo}/admin/hooks
+
 ## Usage
 
 - flow start
@@ -20,11 +24,8 @@ Install the gem:
 $ flow start
 # shows lists of tasks - choosing one starts/assigns the task on pt and checks out a new branch.
 
-# Make sure your branch is up-to-date with release branch
-
 $ flow finish
 # pushes branch, finishes task on pt, and opens github new pull request page.
-# follow with cap staging deploy:migrations BRANCH=master-325325 etc...
 ```
 
 ### Reviewer
