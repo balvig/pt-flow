@@ -3,6 +3,7 @@ require "pt-flow/version"
 require "pt-flow/branch"
 require "pt-flow/pull_requests_table"
 require "pt-flow/repo"
+require "pt-flow/tasks_table"
 require "pt-flow/ui"
 
 module PT

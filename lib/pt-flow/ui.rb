@@ -10,7 +10,7 @@ module PT::Flow
       if @params[0]
         task = create
       else
-        table = PT::TasksTable.new(@client.get_work(@project))
+        table = TasksTable.new(@client.get_work(@project))
         title("Available tasks in #{project_to_s}")
         task = select("Please select a task to start working on", table)
       end
