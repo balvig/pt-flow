@@ -1,6 +1,6 @@
 # pt-flow
 
-TODO: Write a gem description.
+Our workflow, gemified.
 
 ## Installation
 
