@@ -32,14 +32,8 @@ module PT::Flow
 
     def create
       name = @params[0] || ask("Name for the new story:")
-      task_type = case ask('Type? (c)hore, (b)ug, (f)eature')
-                  when 'c', 'chore'
-                    'chore'
-                  when 'b', 'bug'
-                    'bug'
-                  else
-                    'feature'
-                  end
+      types = { 'c' => 'chore', 'b' => 'bug', 'f' => 'feature' }
+      task_type = types[ask('Type? (c)hore, (b)ug, (f)eature')]
       task = @project.stories.create(name: name, requested_by: @local_config[:user_name], story_type: task_type)
       if task.errors.any?
         error(task.errors.errors)
@@ -49,26 +43,9 @@ module PT::Flow
       end
     end
 
-    def deliver
-      review
-      #source = branch
-      #target = branch.target
-      #run('git fetch')
-      #run("git checkout #{target}")
-      #run("git pull --rebase origin #{target}")
-      #run("git merge #{source}")
-      #run("git push origin #{target}")
-      #run("git push origin :#{source}")
-      #run("git branch -d #{source}")
-      #task = PivotalTracker::Story.find(source.task_id, @project.id)
-      #deliver_task(task)
-    end
-
     def review
       table = PullRequestsTable.new(repo.pull_requests)
       pull_request = select("Please select a pull request to review", table)
-      #run("git fetch")
-      #run("git checkout #{pull_request.head.ref}")
       run("open #{pull_request.html_url}/files")
     rescue Github::Error::Unauthorized => e
       error("Error from github: #{e.message}")

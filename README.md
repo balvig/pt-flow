@@ -20,8 +20,7 @@ Install the gem:
 $ flow start
 # shows lists of tasks - choosing one starts/assigns the task on pt and checks out a new branch.
 
-$ git pull --rebase origin master/release_branch/whatever
-# Make sure your branch is up-to-date
+# Make sure your branch is up-to-date with release branch
 
 $ flow finish
 # pushes branch, finishes task on pt, and opens github new pull request page.
