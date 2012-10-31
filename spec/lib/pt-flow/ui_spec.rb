@@ -26,7 +26,7 @@ describe PT::Flow::UI do
         WebMock.should have_requested(:put, "#{endpoint}/projects/102622/stories/4459994").with(body: /<owned_by>Jon Mischo<\/owned_by>/)
         WebMock.should have_requested(:put, "#{endpoint}/projects/102622/stories/4459994").with(body: /<current_state>started<\/current_state>/)
 
-        current_branch.should == 'master.as-a-user-i-should-see-an-unestimated-feature-with-a-fairly-l.4459994'
+        current_branch.should == 'master.as-a-user-i-should-see-an-unestimated-feature-with-.4459994'
       end
     end
 
