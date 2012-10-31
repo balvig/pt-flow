@@ -10,7 +10,7 @@ module PT::Flow
     end
 
     def self.from_task(task)
-      new("#{current.target}.#{task.name.parameterize[0..60]}.#{task.id}")
+      new("#{current.target}.#{task.name.parameterize[0..50]}.#{task.id}")
     end
 
     def initialize(name)
