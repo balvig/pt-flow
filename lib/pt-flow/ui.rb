@@ -26,7 +26,6 @@ module PT::Flow
       title = task.name.gsub('"',"'") + " [Delivers ##{task.id}]"
 
       run("hub pull-request -b #{branch.target} -h #{repo.user}:#{branch} \"#{title}\"")
-      run("git checkout #{branch.target}")
       finish_task(task)
     end
 
