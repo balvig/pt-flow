@@ -42,14 +42,6 @@ module PT::Flow
       end
     end
 
-    def review
-      table = PullRequestsTable.new(repo.pull_requests)
-      pull_request = select("Please select a pull request to review", table)
-      run("open #{pull_request.html_url}/files")
-    rescue Github::Error::Unauthorized => e
-      error("Error from github: #{e.message}")
-    end
-
     def cleanup
       title("Cleaning merged story branches for [#{branch.target}]")
 
@@ -77,8 +69,6 @@ module PT::Flow
       title("Command line usage")
       puts("flow start                             # start working on a story")
       puts("flow finish                            # finish a story and create a pull request")
-      puts("flow review                            # review a pull request")
-      #puts("flow deliver                           # merge current branch and clean up")
       puts("flow cleanup                           # deleted merged local/remote branches and prune origin")
     end
 
