@@ -12,13 +12,7 @@ Set up webhook for Pivotal Tracker:
 
     https://github.com/#{repo}/admin/hooks
 
-## Usage
-
-- flow start
-- flow finish
-- flow review
-
-### Committer
+### Usage
 
 ```bash
 $ flow start
@@ -26,17 +20,11 @@ $ flow start
 
 $ flow finish
 # pushes branch, finishes task on pt, and opens github new pull request page.
-```
 
-### Reviewer
+# reviewer comments :+1: to approve on github
 
-```bash
-$ flow review
-# selecting a pull request opens github page, comment :+1: to approve
-```
+# committer presses merge button on github which delivers task on pivotal tracker
 
-### Committer
-
-```bash
-# pressing merge button on github delivers task on pivotal tracker
+$ flow cleanup
+# cleans up local/remote story branches already merged with current release branch
 ```
