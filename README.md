@@ -24,4 +24,7 @@ $ flow finish
 # reviewer comments :+1: to approve on github
 
 # committer presses merge button on github which delivers task on pivotal tracker
+
+$ flow cleanup
+# cleans up local/remote story branches already merged with current release branch
 ```
