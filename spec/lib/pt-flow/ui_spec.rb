@@ -78,7 +78,7 @@ describe PT::Flow::UI do
     end
 
     it "pushes the current branch to origin, flags the story as finished, and opens a github pull request" do
-      PT::Flow::UI.any_instance.should_receive(:run).with('git push origin new_feature.as-a-user-i-should.4459994')
+      PT::Flow::UI.any_instance.should_receive(:run).with('git push origin new_feature.as-a-user-i-should.4459994 -u')
       PT::Flow::UI.any_instance.should_receive(:run).with("hub pull-request -b new_feature -h cookpad:new_feature.as-a-user-i-should.4459994 \"As a user I should see an Unestimated Feature with a fairly long name [Delivers #4459994]\"")
       PT::Flow::UI.new %w{ finish }
       current_branch.should == 'new_feature.as-a-user-i-should.4459994'

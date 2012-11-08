@@ -21,7 +21,7 @@ module PT::Flow
     end
 
     def finish
-      run("git push origin #{branch}")
+      run("git push origin #{branch} -u")
       task = PivotalTracker::Story.find(branch.task_id, @project.id)
       title = task.name.gsub('"',"'") + " [Delivers ##{task.id}]"
 
