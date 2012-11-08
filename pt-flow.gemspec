@@ -17,7 +17,6 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency 'pt'
   gem.add_dependency 'hub'
-  gem.add_dependency 'github_api'
   gem.add_dependency 'active_support'
   gem.add_dependency 'i18n'
 
