@@ -19,10 +19,8 @@ $ flow start
 # shows lists of tasks - choosing one starts/assigns the task on pt and checks out a new branch.
 
 $ flow finish
-# pushes branch, finishes task on pt, and opens github new pull request page.
-
+# pushes branch, finishes task on pt, and creates a pull request
 # reviewer comments :+1: to approve on github
-
 # committer presses merge button on github which delivers task on pivotal tracker
 
 $ flow cleanup
