@@ -10,7 +10,10 @@ describe PT::Flow::UI do
     stub_request(:get, /projects$/).to_return(body: fixture_file('projects.xml'))
     stub_request(:get, /stories\?/).to_return(body: fixture_file('stories.xml'))
     stub_request(:post, /stories$/).to_return(body: fixture_file('chore.xml'))
-    stub_request(:any, /stories\/\d+/).to_return(body: fixture_file('story.xml'))
+    stub_request(:any, /stories\/\d+/).to_return do |request|
+      id = request.uri.to_s.split('/').last
+      { body: fixture_file("story_#{id}.xml") }
+    end
   end
 
   describe '#start' do
@@ -72,17 +75,20 @@ describe PT::Flow::UI do
 
   describe '#finish' do
     before do
-      #TODO: Stubbed endpoint ALWAYS returns story 4459994, need a way to check it is actually getting the right id from the branch
-      system('git checkout -B new_feature.as-a-user-i-should.4459994')
+      system('git checkout -B new_feature')
+      system('git remote rm origin')
       system('git remote add origin git@github.com:cookpad/pt-flow.git')
+
+      prompt.should_receive(:ask).and_return('3')
+      PT::Flow::UI.new %w{ start }
     end
 
     it "pushes the current branch to origin, flags the story as finished, and opens a github pull request" do
-      PT::Flow::UI.any_instance.should_receive(:run).with('git push origin new_feature.as-a-user-i-should.4459994 -u')
-      PT::Flow::UI.any_instance.should_receive(:run).with("hub pull-request -b new_feature -h cookpad:new_feature.as-a-user-i-should.4459994 \"As a user I should see an Unestimated Feature with a fairly long name [Delivers #4459994]\"")
+      PT::Flow::UI.any_instance.should_receive(:run).with('git push origin new_feature.this-is-for-comments.4460038 -u')
+      PT::Flow::UI.any_instance.should_receive(:run).with("hub pull-request -b new_feature -h cookpad:new_feature.this-is-for-comments.4460038 \"This is for comments [Delivers #4460038]\"")
       PT::Flow::UI.new %w{ finish }
-      current_branch.should == 'new_feature.as-a-user-i-should.4459994'
-      WebMock.should have_requested(:put, "#{endpoint}/projects/102622/stories/4459994").with(body: /<current_state>finished<\/current_state>/)
+      current_branch.should == 'new_feature.this-is-for-comments.4460038'
+      WebMock.should have_requested(:put, "#{endpoint}/projects/102622/stories/4460038").with(body: /<current_state>finished<\/current_state>/)
     end
   end
 end
