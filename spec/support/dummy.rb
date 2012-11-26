@@ -1,14 +1,23 @@
 RSpec.configure do |config|
-  dummy_path = File.join(File.dirname(__FILE__), '..', 'fixtures', 'dummy')
+  fixtures_path = File.expand_path('../../fixtures', __FILE__)
+  dummy_path = File.join(fixtures_path, 'dummy')
+  origin_path = File.join(fixtures_path, 'origin')
 
   config.before(:each) do
-    FileUtils.rm_rf(dummy_path) if Dir.exists?(dummy_path)
-    Dir.mkdir(dummy_path)
+    [dummy_path, origin_path].each do |path|
+      FileUtils.rm_rf(path) if Dir.exists?(path)
+      Dir.mkdir(path)
+    end
     Dir.chdir(dummy_path)
     system('git init .')
     system('touch dummy.txt')
     system('git add .')
     system('git commit -m"init commit"')
+    Dir.chdir(origin_path)
+    system('git init . --bare')
+    Dir.chdir(dummy_path)
+    system("git remote add origin file://#{origin_path}")
+    system("git push -u origin master")
   end
 
 end
