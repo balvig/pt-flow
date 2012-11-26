@@ -1,12 +1,12 @@
 RSpec.configure do |config|
   fixtures_path = File.expand_path('../../fixtures', __FILE__)
   dummy_path = File.join(fixtures_path, 'dummy')
-  origin_path = File.join(fixtures_path, 'origin')
+  origin_path = File.join(fixtures_path, 'origin.git')
 
   config.before(:each) do
     [dummy_path, origin_path].each do |path|
       FileUtils.rm_rf(path) if Dir.exists?(path)
-      Dir.mkdir(path)
+      FileUtils.mkdir_p(path)
     end
     Dir.chdir(dummy_path)
     system('git init .')
