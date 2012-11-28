@@ -1,9 +1,8 @@
 module PT::Flow
   class UI < PT::UI
 
-    def my_work #default command
-      super
-      help
+    def initialize(command, args = [])
+      super [command] + (args)
     end
 
     def start
@@ -20,15 +19,6 @@ module PT::Flow
       run("git checkout -b #{Branch.from_task(task)}")
     end
 
-    def finish
-      run("git push origin #{branch} -u")
-      task = PivotalTracker::Story.find(branch.task_id, @project.id)
-      title = task.name.gsub('"',"'") + " [Delivers ##{task.id}]"
-
-      run("hub pull-request -b #{branch.target} -h #{repo.user}:#{branch} \"#{title}\"")
-      finish_task(task)
-    end
-
     def create
       name = @params[0] || ask("Name for the new story:")
       types = { 'c' => 'chore', 'b' => 'bug', 'f' => 'feature' }
@@ -40,6 +30,15 @@ module PT::Flow
         congrats("#{task_type} created: #{task.url}")
         task
       end
+    end
+
+    def finish
+      run("git push origin #{branch} -u")
+      task = PivotalTracker::Story.find(branch.task_id, @project.id)
+      title = task.name.gsub('"',"'") + " [Delivers ##{task.id}]"
+
+      run("hub pull-request -b #{branch.target} -h #{repo.user}:#{branch} \"#{title}\"")
+      finish_task(task)
     end
 
     def cleanup
@@ -67,9 +66,9 @@ module PT::Flow
       end
 
       title("Command line usage")
-      puts("flow start                             # start working on a story")
-      puts("flow finish                            # finish a story and create a pull request")
-      puts("flow cleanup                           # deleted merged local/remote branches and prune origin")
+      puts("git start                             # start working on a story")
+      puts("git finish                            # finish a story and create a pull request")
+      puts("git cleanup                           # deleted merged local/remote branches and prune origin")
     end
 
     private

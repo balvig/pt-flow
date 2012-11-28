@@ -22,7 +22,7 @@ describe PT::Flow::UI do
         prompt.should_receive(:ask).with("Please select a task to start working on (1-14, 'q' to exit)".bold).and_return('2')
         prompt.should_receive(:ask).with("How many points do you estimate for it? (0,1,2,3)".bold).and_return('3')
 
-        PT::Flow::UI.new %w{ start }
+        PT::Flow::UI.new('start')
 
         WebMock.should have_requested(:get, "#{endpoint}/projects/102622/stories?filter=current_state:unscheduled,unstarted,started")
         WebMock.should have_requested(:put, "#{endpoint}/projects/102622/stories/4459994").with(body: /<estimate>3<\/estimate>/)
@@ -36,7 +36,7 @@ describe PT::Flow::UI do
     context 'given an already estimated story' do
       it "does not prompt to estimate" do
         prompt.should_receive(:ask).once.with("Please select a task to start working on (1-14, 'q' to exit)".bold).and_return('3')
-        PT::Flow::UI.new %w{ start }
+        PT::Flow::UI.new('start')
       end
     end
 
@@ -45,7 +45,7 @@ describe PT::Flow::UI do
 
       it "creates an appropriately namespaced branch" do
         prompt.should_receive(:ask).and_return('3')
-        PT::Flow::UI.new %w{ start }
+        PT::Flow::UI.new('start')
         current_branch.should == 'new_feature.this-is-for-comments.4460038'
       end
     end
@@ -55,7 +55,7 @@ describe PT::Flow::UI do
 
       it "creates a branch within the same namespace" do
         prompt.should_receive(:ask).and_return('3')
-        PT::Flow::UI.new %w{ start }
+        PT::Flow::UI.new('start')
         current_branch.should == 'new_feature.this-is-for-comments.4460038'
       end
     end
@@ -64,7 +64,7 @@ describe PT::Flow::UI do
       it "creates and starts a new story with that name" do
         prompt.should_receive(:ask).with("Type? (c)hore, (b)ug, (f)eature".bold).and_return('c')
 
-        PT::Flow::UI.new ['start','a new feature']
+        PT::Flow::UI.new('start', ['a new feature'])
 
         WebMock.should have_requested(:post, "#{endpoint}/projects/102622/stories").with(body: /<name>a new feature<\/name>/).with(body: /<story_type>chore<\/story_type>/).with(body: /<requested_by>Jon Mischo<\/requested_by>/)
         WebMock.should have_requested(:put, "#{endpoint}/projects/102622/stories/4459994").with(body: /<owned_by>Jon Mischo<\/owned_by>/)
@@ -80,13 +80,13 @@ describe PT::Flow::UI do
       system('git remote add origin git@github.com:cookpad/pt-flow.git')
 
       prompt.should_receive(:ask).and_return('3')
-      PT::Flow::UI.new %w{ start }
+      PT::Flow::UI.new('start')
     end
 
     it "pushes the current branch to origin, flags the story as finished, and opens a github pull request" do
       PT::Flow::UI.any_instance.should_receive(:run).with('git push origin new_feature.this-is-for-comments.4460038 -u')
       PT::Flow::UI.any_instance.should_receive(:run).with("hub pull-request -b new_feature -h cookpad:new_feature.this-is-for-comments.4460038 \"This is for comments [Delivers #4460038]\"")
-      PT::Flow::UI.new %w{ finish }
+      PT::Flow::UI.new('finish')
       current_branch.should == 'new_feature.this-is-for-comments.4460038'
       WebMock.should have_requested(:put, "#{endpoint}/projects/102622/stories/4460038").with(body: /<current_state>finished<\/current_state>/)
     end
