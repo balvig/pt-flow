@@ -60,17 +60,6 @@ module PT::Flow
       congrats("Deleted branches merged with [#{branch.target}]")
     end
 
-    def help
-      if ARGV[0] && ARGV[0] != 'help'
-        message("Command #{ARGV[0]} not recognized. Showing help.")
-      end
-
-      title("Command line usage")
-      puts("git start                             # start working on a story")
-      puts("git finish                            # finish a story and create a pull request")
-      puts("git cleanup                           # deleted merged local/remote branches and prune origin")
-    end
-
     private
 
     def branch
