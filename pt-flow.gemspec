@@ -17,7 +17,7 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency 'pt'
   gem.add_dependency 'hub'
-  gem.add_dependency 'pivotal-tracker', '< 0.5.9'
+  gem.add_dependency 'pivotal-tracker'
   gem.add_dependency 'active_support'
   gem.add_dependency 'i18n'
   gem.add_dependency 'hirb-colors'
