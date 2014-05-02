@@ -12,11 +12,12 @@ Set up webhook for Pivotal Tracker:
 
     https://github.com/#{repo}/admin/hooks
 
-### Usage
+### Basic Usage
 
 ```bash
 $ git start
-# shows lists of tasks - choosing one starts/assigns the task on pt and checks out a new branch.
+# shows lists of tasks - choosing one starts/assigns the task on pt and 
+# automatically creates and checks out a new branch.
 
 $ git finish
 # pushes branch, finishes task on pt, and creates a pull request
@@ -26,3 +27,13 @@ $ git finish
 $ git cleanup
 # cleans up local/remote story branches already merged with current release branch
 ```
+
+### Other commands
+
+```bash
+# creating new stories
+$ git create # prompts for name
+$ git create 'as an admin I can delete users'
+
+# creating and starting a new story
+$ git start 'as an admin I can delete users'
