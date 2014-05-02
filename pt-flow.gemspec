@@ -18,13 +18,11 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'pt'
   gem.add_dependency 'hub'
   gem.add_dependency 'pivotal-tracker'
-  gem.add_dependency 'active_support'
+  gem.add_dependency 'activesupport'
   gem.add_dependency 'i18n'
   gem.add_dependency 'hirb-colors'
 
   gem.add_development_dependency 'rspec', '~> 2.9'
   gem.add_development_dependency 'webmock'
-  gem.add_development_dependency 'guard'
-  gem.add_development_dependency 'guard-rspec'
   gem.add_development_dependency 'rake'
 end
