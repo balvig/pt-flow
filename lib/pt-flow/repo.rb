@@ -12,7 +12,7 @@ module PT::Flow
     private
 
     def path
-      @path ||= `git config --get remote.origin.url`.strip.match(/:(\S+\/\S+)\.git/)[1]
+      @path ||= `git config --get remote.origin.url`.strip.match(/github.com[:\/](\S+\/\S+)\.git/)[1]
     end
 
   end

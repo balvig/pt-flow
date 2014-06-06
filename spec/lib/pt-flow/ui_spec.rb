@@ -74,10 +74,31 @@ describe PT::Flow::UI do
   end
 
   describe '#finish' do
+    context 'ssh repo' do
+      before do
+        system('git checkout -B new_feature')
+        system('git remote rm origin')
+        system('git remote add origin git@github.com:cookpad/pt-flow.git')
+
+        prompt.should_receive(:ask).and_return('3')
+        PT::Flow::UI.new('start')
+      end
+
+      it "pushes the current branch to origin, flags the story as finished, and opens a github pull request" do
+        PT::Flow::UI.any_instance.should_receive(:run).with('git push origin new_feature.this-is-for-comments.4460038 -u')
+        PT::Flow::UI.any_instance.should_receive(:run).with("hub pull-request -b new_feature -h cookpad:new_feature.this-is-for-comments.4460038 -m \"This is for comments [Delivers #4460038]\"")
+        PT::Flow::UI.new('finish')
+        current_branch.should == 'new_feature.this-is-for-comments.4460038'
+        WebMock.should have_requested(:put, "#{endpoint}/projects/102622/stories/4460038").with(body: /<current_state>finished<\/current_state>/)
+      end
+    end
+  end
+
+  context 'https repo' do
     before do
       system('git checkout -B new_feature')
       system('git remote rm origin')
-      system('git remote add origin git@github.com:cookpad/pt-flow.git')
+      system('git remote add origin https://github.com/balvig/pt-flow.git')
 
       prompt.should_receive(:ask).and_return('3')
       PT::Flow::UI.new('start')
@@ -85,10 +106,8 @@ describe PT::Flow::UI do
 
     it "pushes the current branch to origin, flags the story as finished, and opens a github pull request" do
       PT::Flow::UI.any_instance.should_receive(:run).with('git push origin new_feature.this-is-for-comments.4460038 -u')
-      PT::Flow::UI.any_instance.should_receive(:run).with("hub pull-request -b new_feature -h cookpad:new_feature.this-is-for-comments.4460038 \"This is for comments [Delivers #4460038]\"")
+      PT::Flow::UI.any_instance.should_receive(:run).with("hub pull-request -b new_feature -h balvig:new_feature.this-is-for-comments.4460038 -m \"This is for comments [Delivers #4460038]\"")
       PT::Flow::UI.new('finish')
-      current_branch.should == 'new_feature.this-is-for-comments.4460038'
-      WebMock.should have_requested(:put, "#{endpoint}/projects/102622/stories/4460038").with(body: /<current_state>finished<\/current_state>/)
     end
   end
 end

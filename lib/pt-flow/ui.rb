@@ -37,7 +37,7 @@ module PT::Flow
       task = PivotalTracker::Story.find(branch.task_id, @project.id)
       title = task.name.gsub('"',"'") + " [Delivers ##{task.id}]"
 
-      run("hub pull-request -b #{branch.target} -h #{repo.user}:#{branch} \"#{title}\"")
+      run("hub pull-request -b #{branch.target} -h #{repo.user}:#{branch} -m \"#{title}\"")
       finish_task(task)
     end
 
