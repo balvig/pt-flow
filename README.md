@@ -1,4 +1,4 @@
-# pt-flow
+# pt-flow [![Build Status](https://travis-ci.org/balvig/pt-flow.svg?branch=master)](https://travis-ci.org/balvig/pt-flow)
 
 Our workflow, gemified.
 

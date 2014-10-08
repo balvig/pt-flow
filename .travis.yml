@@ -1,5 +1,5 @@
 language: ruby
-script: "rake"
+script: 'git config --global user.name "Your Name" && git config --global user.email "you@example.com" && rake'
 rvm:
-  - 1.9.2
   - 1.9.3
+  - 2.0.0
