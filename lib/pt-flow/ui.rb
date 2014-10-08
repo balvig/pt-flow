@@ -39,6 +39,7 @@ module PT::Flow
 
       run("hub pull-request -b #{branch.target} -h #{repo.user}:#{branch} -m \"#{title}\"")
       finish_task(task)
+      merge! if @params.include?('--merge')
     end
 
     def cleanup
@@ -77,6 +78,14 @@ module PT::Flow
       else
         congrats("Task assigned to #{owner}")
       end
+    end
+
+    def merge!
+      finished_branch = branch
+      run "git checkout #{finished_branch.target}"
+      run "git pull"
+      run "git merge #{finished_branch}"
+      run "git push origin #{finished_branch.target}"
     end
 
     def run(command)
