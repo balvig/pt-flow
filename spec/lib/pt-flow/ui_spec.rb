@@ -95,15 +95,15 @@ module PT::Flow
           end
         end
 
-        context 'given option --merge' do
+        context 'given option --deliver' do
           it "pushes the current branch to origin, flags the story as finished, opens github pull request, merges it in and returns to master and pulls" do
             UI.any_instance.should_receive(:run).with('git push origin new_feature.this-is-for-comments.4460038 -u')
             UI.any_instance.should_receive(:run).with("hub pull-request -b new_feature -h cookpad:new_feature.this-is-for-comments.4460038 -m \"This is for comments [Delivers #4460038]\"")
             UI.any_instance.should_receive(:run).with('git checkout new_feature')
             UI.any_instance.should_receive(:run).with('git pull')
-            UI.any_instance.should_receive(:run).with('git merge new_feature.this-is-for-comments.4460038')
+            UI.any_instance.should_receive(:run).with("git merge new_feature.this-is-for-comments.4460038 --no-ff -m \"This is for comments [Delivers #4460038]\"")
             UI.any_instance.should_receive(:run).with('git push origin new_feature')
-            UI.new('finish', ['--merge'])
+            UI.new('finish', ['--deliver'])
           end
         end
       end

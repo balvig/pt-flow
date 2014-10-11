@@ -34,12 +34,9 @@ module PT::Flow
 
     def finish
       run("git push origin #{branch} -u")
-      task = PivotalTracker::Story.find(branch.task_id, @project.id)
-      title = task.name.gsub('"',"'") + " [Delivers ##{task.id}]"
-
-      run("hub pull-request -b #{branch.target} -h #{repo.user}:#{branch} -m \"#{title}\"")
-      finish_task(task)
-      merge! if @params.include?('--merge')
+      run("hub pull-request -b #{branch.target} -h #{repo.user}:#{branch} -m \"#{task_title}\"")
+      finish_task(current_task)
+      deliver! if @params.include?('--deliver')
     end
 
     def cleanup
@@ -80,11 +77,20 @@ module PT::Flow
       end
     end
 
-    def merge!
+    def current_task
+      PivotalTracker::Story.find(branch.task_id, @project.id)
+    end
+
+    def task_title
+      current_task.name.gsub('"',"'") + " [Delivers ##{current_task.id}]"
+    end
+
+    def deliver!
       finished_branch = branch
+      title = task_title
       run "git checkout #{finished_branch.target}"
       run "git pull"
-      run "git merge #{finished_branch}"
+      run "git merge #{finished_branch} --no-ff -m \"#{title}\""
       run "git push origin #{finished_branch.target}"
     end
 
