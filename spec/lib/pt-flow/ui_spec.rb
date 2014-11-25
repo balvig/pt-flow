@@ -25,7 +25,7 @@ module PT::Flow
 
           UI.new('start')
 
-          WebMock.should have_requested(:get, "#{endpoint}/projects/102622/stories?filter=current_state:unscheduled,unstarted,started")
+          WebMock.should have_requested(:get, "#{endpoint}/projects/102622/stories?filter=current_state:unstarted,started")
           WebMock.should have_requested(:put, "#{endpoint}/projects/102622/stories/4459994").with(body: /<estimate>3<\/estimate>/)
           WebMock.should have_requested(:put, "#{endpoint}/projects/102622/stories/4459994").with(body: /<owned_by>Jon Mischo<\/owned_by>/)
           WebMock.should have_requested(:put, "#{endpoint}/projects/102622/stories/4459994").with(body: /<current_state>started<\/current_state>/)
@@ -70,6 +70,17 @@ module PT::Flow
           WebMock.should have_requested(:post, "#{endpoint}/projects/102622/stories").with(body: /<name>a new feature<\/name>/).with(body: /<story_type>chore<\/story_type>/).with(body: /<requested_by>Jon Mischo<\/requested_by>/)
           WebMock.should have_requested(:put, "#{endpoint}/projects/102622/stories/4459994").with(body: /<owned_by>Jon Mischo<\/owned_by>/)
           WebMock.should have_requested(:put, "#{endpoint}/projects/102622/stories/4459994").with(body: /<current_state>started<\/current_state>/)
+        end
+      end
+
+      context 'given --include-icebox' do
+        it "it includes icebox stories" do
+          prompt.should_receive(:ask).with("Please select a task to start working on (1-14, 'q' to exit)".bold).and_return('2')
+          prompt.should_receive(:ask).with("How many points do you estimate for it? (0,1,2,3)".bold).and_return('3')
+
+          UI.new('start', ['--include-icebox'])
+
+          WebMock.should have_requested(:get, "#{endpoint}/projects/102622/stories?filter=current_state:unstarted,started,unscheduled")
         end
       end
     end

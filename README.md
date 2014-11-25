@@ -16,8 +16,11 @@ Set up webhook for Pivotal Tracker:
 
 ```bash
 $ git start
-# shows lists of tasks - choosing one starts/assigns the task on pt and 
+# shows lists of tasks (excluding icebox) - choosing one starts/assigns the task on pt and
 # automatically creates and checks out a new branch.
+
+$ git start --include-icebox
+# same as git start, including contents of icebox
 
 $ git finish
 # pushes branch, finishes task on pt, and creates a pull request

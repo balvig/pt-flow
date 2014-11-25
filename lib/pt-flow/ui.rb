@@ -6,10 +6,12 @@ module PT::Flow
     end
 
     def start
-      if @params[0]
+      if @params[0] && !@params[0].start_with?('--')
         task = create
       else
-        table = TasksTable.new(@client.get_work(@project))
+        filter = 'unstarted,started'
+        filter += ',unscheduled' if @params.include?('--include-icebox')
+        table = TasksTable.new(@project.stories.all(:current_state => filter))
         title("Available tasks in #{project_to_s}")
         task = select("Please select a task to start working on", table)
       end
