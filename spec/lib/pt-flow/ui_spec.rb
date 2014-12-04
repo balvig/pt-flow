@@ -137,5 +137,19 @@ module PT::Flow
       end
     end
 
+    context 'finishing a bug' do
+      before do
+        system('git remote rm origin')
+        system('git remote add origin git@github.com:cookpad/pt-flow.git')
+        system('git checkout -B master.this-is-a-bug.4492080')
+      end
+
+      it "prepends title with Bugfix: " do
+        UI.any_instance.should_receive(:run).with('git push origin master.this-is-a-bug.4492080 -u')
+        UI.any_instance.should_receive(:run).with("hub pull-request -b master -h cookpad:master.this-is-a-bug.4492080 -m \"Bugfix: This is a bug [Delivers #4492080]\"")
+        UI.new('finish')
+      end
+    end
+
   end
 end

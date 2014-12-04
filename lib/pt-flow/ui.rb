@@ -84,7 +84,9 @@ module PT::Flow
     end
 
     def task_title
-      current_task.name.gsub('"',"'") + " [Delivers ##{current_task.id}]"
+      task_title = current_task.name.gsub('"',"'") + " [Delivers ##{current_task.id}]"
+      task_title = 'Bugfix: ' + task_title if current_task.story_type == 'bug'
+      task_title
     end
 
     def deliver!
