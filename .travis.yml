@@ -3,3 +3,6 @@ script: 'git config --global user.name "Your Name" && git config --global user.e
 rvm:
   - 1.9.3
   - 2.0.0
+  - 2.1.1
+notifications:
+  email: false
