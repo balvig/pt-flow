@@ -158,6 +158,5 @@ module PT::Flow
         UI.new('finish')
       end
     end
-
   end
 end

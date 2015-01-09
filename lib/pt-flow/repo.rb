@@ -9,11 +9,15 @@ module PT::Flow
       path.split('/').last
     end
 
+    def url
+      "https://github.com/#{user}/#{name}"
+    end
+
     private
 
-    def path
-      @path ||= `git config --get remote.origin.url`.strip.match(/github.com[:\/](\S+\/\S+)\.git/)[1]
-    end
+      def path
+        @path ||= `git config --get remote.origin.url`.strip.match(/github.com[:\/](\S+\/\S+)\.git/)[1]
+      end
 
   end
 end

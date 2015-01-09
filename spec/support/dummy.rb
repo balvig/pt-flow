@@ -19,5 +19,4 @@ RSpec.configure do |config|
     system("git remote add origin file://#{origin_path}")
     system("git push -u origin master")
   end
-
 end
