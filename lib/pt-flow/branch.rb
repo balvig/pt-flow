@@ -1,7 +1,8 @@
+require 'i18n'
+require 'active_support/core_ext/string/inflections'
+
 module PT::Flow
   class Branch
-    require 'i18n'
-    require 'active_support/core_ext/string/inflections'
 
     attr_accessor :name
 
