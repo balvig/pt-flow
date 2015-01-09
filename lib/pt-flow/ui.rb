@@ -36,7 +36,7 @@ module PT::Flow
 
     def finish
       run("git push origin #{branch} -u")
-      run("hub pull-request -b #{branch.target} -h #{repo.user}:#{branch} -m \"#{task_title}\"")
+      pull_request
       finish_task(current_task)
       deliver! if @params.include?('--deliver')
     end
@@ -87,6 +87,15 @@ module PT::Flow
       task_title = current_task.name.gsub('"',"'") + " [Delivers ##{current_task.id}]"
       task_title = 'Bugfix: ' + task_title if current_task.story_type == 'bug'
       task_title
+    end
+
+    def pull_request
+      if @params.include?('--draft')
+        pr_url = `hub compare -u #{branch.target}...#{branch}`.chomp + "?expand=1&title=#{URI.escape(task_title)}"
+        run "open #{pr_url}"
+      else
+        run("hub pull-request -b #{branch.target} -h #{repo.user}:#{branch} -m \"#{task_title}\"")
+      end
     end
 
     def deliver!
