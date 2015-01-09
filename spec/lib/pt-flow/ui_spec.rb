@@ -121,7 +121,7 @@ module PT::Flow
         context 'given option --draft' do
           it "pushes the current branch to origin, flags the story as finished, and opens github pull request URL" do
             UI.any_instance.should_receive(:run).with('git push origin new_feature.this-is-for-comments.4460038 -u')
-            UI.any_instance.should_receive(:run).with('open https://github.com/cookpad/pt-flow/compare/new_feature...new_feature.this-is-for-comments.4460038?expand=1&title=This%20is%20for%20comments%20[Delivers%20%234460038]')
+            UI.any_instance.should_receive(:run).with("open \"https://github.com/cookpad/pt-flow/compare/new_feature...new_feature.this-is-for-comments.4460038?expand=1&title=This%20is%20for%20comments%20[Delivers%20%234460038]\"")
             UI.new('finish', ['--draft'])
           end
         end
