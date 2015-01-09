@@ -27,6 +27,9 @@ $ git finish
 # reviewer comments :+1: to approve on github
 # committer presses merge button on github which delivers task on pivotal tracker
 
+$ git finish --draft
+# Opens github pull request screen rather than auto-submitting
+
 $ git cleanup
 # cleans up local/remote story branches already merged with current release branch
 ```
