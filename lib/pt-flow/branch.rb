@@ -1,9 +1,7 @@
-require 'i18n'
 require 'active_support/core_ext/string/inflections'
 
 module PT::Flow
   class Branch
-
     attr_accessor :name
 
     def self.current
@@ -29,6 +27,5 @@ module PT::Flow
     def to_s
       name
     end
-
   end
 end

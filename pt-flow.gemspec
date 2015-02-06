@@ -19,7 +19,6 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'hub'
   gem.add_dependency 'pivotal-tracker'
   gem.add_dependency 'activesupport'
-  gem.add_dependency 'i18n'
   gem.add_dependency 'hirb-colors'
 
   gem.add_development_dependency 'rspec', '~> 2.9'
