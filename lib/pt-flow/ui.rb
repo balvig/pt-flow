@@ -49,7 +49,7 @@ module PT::Flow
       run("git remote prune origin")
 
       # Only clean out merged story branches for current topic
-      filter = "^#{branch.target}.\\+[0-9]\\+$"
+      filter = "^ *#{branch.target}.\\+[0-9]\\+$"
 
       # Remove local branches fully merged with origin/current_target
       run("git branch --merged origin/#{branch.target} | grep '#{filter}' | xargs git branch -D")
