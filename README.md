@@ -23,12 +23,9 @@ $ git start --include-icebox
 # same as git start, including contents of icebox
 
 $ git finish
-# pushes branch, finishes task on pt, and creates a pull request
+# pushes branch, finishes task on pt, and opens new pull request
 # reviewer comments :+1: to approve on github
 # committer presses merge button on github which delivers task on pivotal tracker
-
-$ git finish --draft
-# Opens github pull request screen rather than auto-submitting
 
 $ git cleanup
 # cleans up local/remote story branches already merged with current release branch

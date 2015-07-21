@@ -35,10 +35,13 @@ module PT::Flow
     end
 
     def finish
-      run("git push origin #{branch} -u")
-      pull_request
-      finish_task(current_task)
-      deliver! if @params.include?('--deliver')
+      run "git push origin #{branch} -u"
+      finish_task current_task
+      if @params.include?('--deliver')
+        deliver!
+      else
+        open_url draft_pr_url
+      end
     end
 
     def cleanup
@@ -89,19 +92,12 @@ module PT::Flow
       task_title
     end
 
-    def pull_request
-      if @params.include?('--draft')
-        open_url draft_pr_url
-      else
-        run("hub pull-request -b #{branch.target} -h #{repo.user}:#{branch} -m \"#{task_title}\"")
-      end
-    end
-
     def draft_pr_url
       repo.url + "/compare/#{branch.target}...#{branch}?expand=1&title=#{URI.escape(task_title)}"
     end
 
     def deliver!
+      run "hub pull-request -b #{branch.target} -h #{repo.user}:#{branch} -m \"#{task_title}\""
       finished_branch = branch
       title = task_title
       run "git checkout #{finished_branch.target}"
