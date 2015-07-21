@@ -111,7 +111,11 @@ module PT::Flow
     end
 
     def open_url(url)
-      run "open \"#{url}\""
+      if ENV['BROWSER'] == 'echo'
+        title url
+      else
+        run "open \"#{url}\""
+      end
     end
 
     def run(command)
