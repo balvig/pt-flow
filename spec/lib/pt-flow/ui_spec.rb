@@ -97,9 +97,10 @@ module PT::Flow
         end
 
         context 'no options' do
-          it "pushes the current branch to origin, flags the story as finished, and opens a github pull request" do
+          it "pushes the current branch to origin, flags the story as finished, and opens github pull request URL" do
+            ENV['BROWSER'] = ''
             UI.any_instance.should_receive(:run).with('git push origin new_feature.this-is-for-comments.4460038 -u')
-            UI.any_instance.should_receive(:run).with("hub pull-request -b new_feature -h cookpad:new_feature.this-is-for-comments.4460038 -m \"This is for comments [Delivers #4460038]\"")
+            UI.any_instance.should_receive(:run).with("open \"https://github.com/cookpad/pt-flow/compare/new_feature...new_feature.this-is-for-comments.4460038?expand=1&title=This%20is%20for%20comments%20[Delivers%20%234460038]\"")
             UI.new('finish')
             current_branch.should == 'new_feature.this-is-for-comments.4460038'
             WebMock.should have_requested(:put, "#{endpoint}/projects/102622/stories/4460038").with(body: /<current_state>finished<\/current_state>/)
@@ -117,15 +118,6 @@ module PT::Flow
             UI.new('finish', ['--deliver'])
           end
         end
-
-        context 'given option --draft' do
-          it "pushes the current branch to origin, flags the story as finished, and opens github pull request URL" do
-            ENV['BROWSER'] = ''
-            UI.any_instance.should_receive(:run).with('git push origin new_feature.this-is-for-comments.4460038 -u')
-            UI.any_instance.should_receive(:run).with("open \"https://github.com/cookpad/pt-flow/compare/new_feature...new_feature.this-is-for-comments.4460038?expand=1&title=This%20is%20for%20comments%20[Delivers%20%234460038]\"")
-            UI.new('finish', ['--draft'])
-          end
-        end
       end
     end
 
@@ -141,7 +133,7 @@ module PT::Flow
 
       it "pushes the current branch to origin, flags the story as finished, and opens a github pull request" do
         UI.any_instance.should_receive(:run).with('git push origin new_feature.this-is-for-comments.4460038 -u')
-        UI.any_instance.should_receive(:run).with("hub pull-request -b new_feature -h balvig:new_feature.this-is-for-comments.4460038 -m \"This is for comments [Delivers #4460038]\"")
+        UI.any_instance.should_receive(:run).with("open \"https://github.com/balvig/pt-flow/compare/new_feature...new_feature.this-is-for-comments.4460038?expand=1&title=This%20is%20for%20comments%20[Delivers%20%234460038]\"")
         UI.new('finish')
       end
     end
@@ -155,7 +147,7 @@ module PT::Flow
 
       it "prepends title with Bugfix: " do
         UI.any_instance.should_receive(:run).with('git push origin master.this-is-a-bug.4492080 -u')
-        UI.any_instance.should_receive(:run).with("hub pull-request -b master -h cookpad:master.this-is-a-bug.4492080 -m \"Bugfix: This is a bug [Delivers #4492080]\"")
+        UI.any_instance.should_receive(:run).with("open \"https://github.com/cookpad/pt-flow/compare/master...master.this-is-a-bug.4492080?expand=1&title=Bugfix:%20This%20is%20a%20bug%20[Delivers%20%234492080]\"")
         UI.new('finish')
       end
     end
