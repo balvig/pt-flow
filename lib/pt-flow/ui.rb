@@ -91,11 +91,14 @@ module PT::Flow
 
     def pull_request
       if @params.include?('--draft')
-        pr_url = repo.url + "/compare/#{branch.target}...#{branch}?expand=1&title=#{URI.escape(task_title)}"
-        run "open \"#{pr_url}\""
+        open_url draft_pr_url
       else
         run("hub pull-request -b #{branch.target} -h #{repo.user}:#{branch} -m \"#{task_title}\"")
       end
+    end
+
+    def draft_pr_url
+      repo.url + "/compare/#{branch.target}...#{branch}?expand=1&title=#{URI.escape(task_title)}"
     end
 
     def deliver!
@@ -105,6 +108,10 @@ module PT::Flow
       run "git pull"
       run "git merge #{finished_branch} --no-ff -m \"#{title}\""
       run "git push origin #{finished_branch.target}"
+    end
+
+    def open_url(url)
+      run "open \"#{url}\""
     end
 
     def run(command)
