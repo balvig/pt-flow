@@ -39,7 +39,7 @@ module PT::Flow
       if @params.include?('--deliver')
         deliver!
       elsif @params.include?('--wip')
-        open_url pull_request_url('[WIP] ')
+        open_url pull_request_url('[WIP]')
       else
         finish_task current_task
         open_url pull_request_url
@@ -95,7 +95,8 @@ module PT::Flow
     end
 
     def pull_request_url(prefix = nil)
-      repo.url + "/compare/#{branch.target}...#{branch}?expand=1&title=#{prefix}#{URI.escape(task_title)}"
+      title = URI.escape "#{prefix} #{task_title}".strip
+      repo.url + "/compare/#{branch.target}...#{branch}?expand=1&title=#{title}"
     end
 
     def deliver!
