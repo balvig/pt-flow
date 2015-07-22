@@ -24,8 +24,10 @@ $ git start --include-icebox
 
 $ git finish
 # pushes branch, finishes task on pt, and opens new pull request
-# reviewer comments :+1: to approve on github
-# committer presses merge button on github which delivers task on pivotal tracker
+# pressing merge button on github delivers task on pivotal tracker
+
+$ git finish --wip
+# pushes branch and submits [WIP] pull request
 
 $ git cleanup
 # cleans up local/remote story branches already merged with current release branch
