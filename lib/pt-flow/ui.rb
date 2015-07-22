@@ -36,11 +36,13 @@ module PT::Flow
 
     def finish
       run "git push origin #{branch} -u"
-      finish_task current_task
       if @params.include?('--deliver')
         deliver!
+      elsif @params.include?('--wip')
+        open_url pull_request_url('[WIP]')
       else
-        open_url draft_pr_url
+        finish_task current_task
+        open_url pull_request_url
       end
     end
 
@@ -92,8 +94,9 @@ module PT::Flow
       task_title
     end
 
-    def draft_pr_url
-      repo.url + "/compare/#{branch.target}...#{branch}?expand=1&title=#{URI.escape(task_title)}"
+    def pull_request_url(prefix = nil)
+      title = URI.escape "#{prefix} #{task_title}".strip
+      repo.url + "/compare/#{branch.target}...#{branch}?expand=1&title=#{title}"
     end
 
     def deliver!
