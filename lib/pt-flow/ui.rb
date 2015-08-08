@@ -11,7 +11,9 @@ module PT::Flow
       else
         filter = 'unstarted,started'
         filter += ',unscheduled' if @params.include?('--include-icebox')
-        table = TasksTable.new(@project.stories.all(:current_state => filter))
+        filters = { :current_state => filter }
+        filters[:owner] = @local_config[:user_name] if @params.include?('--only-myself')
+        table = TasksTable.new(@project.stories.all(filters))
         title("Available tasks in #{project_to_s}")
         task = select("Please select a task to start working on", table)
       end

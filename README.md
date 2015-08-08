@@ -22,6 +22,9 @@ $ git start
 $ git start --include-icebox
 # same as git start, including contents of icebox
 
+$ git start --only-myself
+# same as git start, but only shows tasks assigned to yourself
+
 $ git finish
 # pushes branch, finishes task on pt, and opens new pull request
 # pressing merge button on github delivers task on pivotal tracker
