@@ -83,6 +83,17 @@ module PT::Flow
           WebMock.should have_requested(:get, "#{endpoint}/projects/102622/stories?filter=current_state:unstarted,started,unscheduled")
         end
       end
+
+      context 'given --only-myself' do
+        it "it only includes stories assigned to myself" do
+          prompt.should_receive(:ask).with("Please select a task to start working on (1-14, 'q' to exit)".bold).and_return('2')
+          prompt.should_receive(:ask).with("How many points do you estimate for it? (0,1,2,3)".bold).and_return('3')
+
+          UI.new('start', ['--only-myself'])
+
+          WebMock.should have_requested(:get, "#{endpoint}/projects/102622/stories?filter=current_state:unstarted,started+owner:Jon+Mischo")
+        end
+      end
     end
 
     describe '#finish' do
