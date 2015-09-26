@@ -73,14 +73,20 @@ module PT::Flow
         end
       end
 
-      context 'given --include-icebox' do
-        it "it includes icebox stories" do
+      context 'given various filters' do
+        before do
           prompt.should_receive(:ask).with("Please select a task to start working on (1-14, 'q' to exit)".bold).and_return('2')
           prompt.should_receive(:ask).with("How many points do you estimate for it? (0,1,2,3)".bold).and_return('3')
+        end
 
-          UI.new('start', ['--include-icebox'])
+        it "it allows showing icebox contents" do
+          UI.new('start', ['--filter=icebox'])
+          WebMock.should have_requested(:get, "#{endpoint}/projects/102622/stories?filter=current_state:unscheduled")
+        end
 
-          WebMock.should have_requested(:get, "#{endpoint}/projects/102622/stories?filter=current_state:unstarted,started,unscheduled")
+        it "it allows showing your own tasks" do
+          UI.new('start', ['--filter=me'])
+          WebMock.should have_requested(:get, "#{endpoint}/projects/102622/stories?filter=current_state:unstarted,started+owner:Jon+Mischo")
         end
       end
     end

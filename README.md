@@ -19,8 +19,11 @@ $ git start
 # shows lists of tasks (excluding icebox) - choosing one starts/assigns the task on pt and
 # automatically creates and checks out a new branch.
 
-$ git start --include-icebox
-# same as git start, including contents of icebox
+$ git start --filter=icebox
+# same as git start, showing contents of icebox
+
+$ git start --filter=me
+# shows only own tasks
 
 $ git finish
 # pushes branch, finishes task on pt, and opens new pull request
