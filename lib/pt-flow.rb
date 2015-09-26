@@ -6,6 +6,7 @@ require 'pt-flow/task_row'
 require 'pt-flow/tasks_table'
 require 'pt-flow/ui'
 require 'hirb-colors'
+require 'trollop'
 
 module PT
   module Flow
