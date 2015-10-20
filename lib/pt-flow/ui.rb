@@ -138,7 +138,7 @@ module PT::Flow
       def filters
         {
           'icebox' => { current_state: 'unscheduled' },
-          'me' => { current_state: 'unstarted,started', owner: user_name }
+          'me' => { current_state: 'unscheduled,unstarted,started', owner: user_name }
         }
       end
 

@@ -86,7 +86,7 @@ module PT::Flow
 
         it "it allows showing your own tasks" do
           UI.new('start', ['--filter=me'])
-          WebMock.should have_requested(:get, "#{endpoint}/projects/102622/stories?filter=current_state:unstarted,started+owner:Jon+Mischo")
+          WebMock.should have_requested(:get, "#{endpoint}/projects/102622/stories?filter=current_state:unscheduled,unstarted,started+owner:Jon+Mischo")
         end
       end
     end
