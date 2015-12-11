@@ -46,10 +46,8 @@ module PT::Flow
       run "git push origin #{branch} -u"
       if @options[:deliver]
         deliver!
-      elsif @options[:wip]
-        open_url pull_request_url('[WIP]')
       else
-        finish_task current_task
+        finish_task(current_task) unless @options[:wip]
         open_url pull_request_url
       end
     end
@@ -102,9 +100,16 @@ module PT::Flow
         task_title
       end
 
-      def pull_request_url(prefix = nil)
+      def pull_request_url
         title = URI.escape "#{prefix} #{task_title}".strip
         repo.url + "/compare/#{branch.target}...#{branch}?expand=1&title=#{title}"
+      end
+
+      def prefix
+        prefixes = []
+        prefixes << "[WIP]" if @options[:wip]
+        prefixes << "[#{branch.target.titleize}]" if branch.release_branch?
+        prefixes.join(" ")
       end
 
       def deliver!

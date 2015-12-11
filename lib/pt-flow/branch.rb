@@ -20,6 +20,10 @@ module PT::Flow
       name.split('.').first
     end
 
+    def release_branch?
+      target != 'master'
+    end
+
     def task_id
       name[/\d+$/] || ''
     end
