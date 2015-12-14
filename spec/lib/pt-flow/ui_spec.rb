@@ -106,17 +106,17 @@ module PT::Flow
         context 'no options' do
           it "pushes the current branch to origin, flags the story as finished, and opens github pull request URL" do
             UI.any_instance.should_receive(:run).with('git push origin new_feature.this-is-for-comments.4460038 -u')
-            UI.any_instance.should_receive(:run).with("open \"https://github.com/cookpad/pt-flow/compare/new_feature...new_feature.this-is-for-comments.4460038?expand=1&title=This%20is%20for%20comments%20[Delivers%20%234460038]\"")
+            UI.any_instance.should_receive(:run).with("open \"https://github.com/cookpad/pt-flow/compare/new_feature...new_feature.this-is-for-comments.4460038?expand=1&title=[New%20Feature]%20This%20is%20for%20comments%20[Delivers%20%234460038]\"")
             UI.new('finish')
             current_branch.should == 'new_feature.this-is-for-comments.4460038'
             WebMock.should have_requested(:put, "#{endpoint}/projects/102622/stories/4460038").with(body: /<current_state>finished<\/current_state>/)
           end
         end
 
-        context 'give option --wip' do
+        context 'given option --wip' do
           it "pushes the current branch to origin, and opens github [WIP] pull request URL" do
             UI.any_instance.should_receive(:run).with('git push origin new_feature.this-is-for-comments.4460038 -u')
-            UI.any_instance.should_receive(:run).with("open \"https://github.com/cookpad/pt-flow/compare/new_feature...new_feature.this-is-for-comments.4460038?expand=1&title=[WIP]%20This%20is%20for%20comments%20[Delivers%20%234460038]\"")
+            UI.any_instance.should_receive(:run).with("open \"https://github.com/cookpad/pt-flow/compare/new_feature...new_feature.this-is-for-comments.4460038?expand=1&title=[WIP]%20[New%20Feature]%20This%20is%20for%20comments%20[Delivers%20%234460038]\"")
             UI.new('finish', ['--wip'])
           end
         end
@@ -137,7 +137,7 @@ module PT::Flow
 
     context 'https repo' do
       before do
-        system('git checkout -B new_feature')
+        system('git checkout -B master')
         system('git remote rm origin')
         system('git remote add origin https://github.com/balvig/pt-flow.git')
 
@@ -146,8 +146,8 @@ module PT::Flow
       end
 
       it "pushes the current branch to origin, flags the story as finished, and opens a github pull request" do
-        UI.any_instance.should_receive(:run).with('git push origin new_feature.this-is-for-comments.4460038 -u')
-        UI.any_instance.should_receive(:run).with("open \"https://github.com/balvig/pt-flow/compare/new_feature...new_feature.this-is-for-comments.4460038?expand=1&title=This%20is%20for%20comments%20[Delivers%20%234460038]\"")
+        UI.any_instance.should_receive(:run).with('git push origin master.this-is-for-comments.4460038 -u')
+        UI.any_instance.should_receive(:run).with("open \"https://github.com/balvig/pt-flow/compare/master...master.this-is-for-comments.4460038?expand=1&title=This%20is%20for%20comments%20[Delivers%20%234460038]\"")
         UI.new('finish')
       end
     end
